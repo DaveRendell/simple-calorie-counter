@@ -9,7 +9,6 @@
   --color-danger: #ef4444;
   --color-danger-hover: #dc2626;
   --radius: 8px;
-  --max-width: 480px;
 }
 
 *,
@@ -33,7 +32,6 @@ body {
 }
 
 #root {
-  max-width: var(--max-width);
   margin: 0 auto;
   min-height: 100dvh;
   display: flex;
