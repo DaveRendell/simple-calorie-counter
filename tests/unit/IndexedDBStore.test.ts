@@ -91,6 +91,34 @@ describe("IndexedDBStore", () => {
       expect(entries[0].description).toBe("Big lunch");
     });
 
+    it("should return entries sorted by createdAt", async () => {
+      await store.addEntry({
+        date: "2024-01-15",
+        calories: 200,
+        description: "Snack",
+        createdAt: 3000,
+      });
+      await store.addEntry({
+        date: "2024-01-15",
+        calories: 500,
+        description: "Breakfast",
+        createdAt: 1000,
+      });
+      await store.addEntry({
+        date: "2024-01-15",
+        calories: 800,
+        description: "Lunch",
+        createdAt: 2000,
+      });
+
+      const entries = await store.getEntriesByDate("2024-01-15");
+      expect(entries.map((e) => e.description)).toEqual([
+        "Breakfast",
+        "Lunch",
+        "Snack",
+      ]);
+    });
+
     it("should delete an entry", async () => {
       const entry = await store.addEntry({
         date: "2024-01-15",

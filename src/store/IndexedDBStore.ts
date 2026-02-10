@@ -31,7 +31,8 @@ export class IndexedDBStore implements DataStore {
 
   async getEntriesByDate(date: string): Promise<FoodEntry[]> {
     const db = await this.dbPromise;
-    return db.getAllFromIndex(ENTRIES_STORE, "date", date);
+    const entries = await db.getAllFromIndex(ENTRIES_STORE, "date", date);
+    return entries.sort((a, b) => a.createdAt - b.createdAt);
   }
 
   async getEntryById(id: string): Promise<FoodEntry | undefined> {

@@ -32,3 +32,12 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.field-error {
+  font-size: 13px;
+  color: var(--color-danger);
+}
+
+input[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}

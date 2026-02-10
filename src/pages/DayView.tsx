@@ -4,6 +4,7 @@ import { useEntries } from "../hooks/useEntries";
 import { useSettings } from "../hooks/useSettings";
 import { EntryCard } from "../components/EntryCard";
 import { ProgressBar } from "../components/ProgressBar";
+import { toDateStr } from "../dateFormat";
 import "./DayView.css";
 
 function formatDate(dateStr: string): string {
@@ -17,15 +18,14 @@ function formatDate(dateStr: string): string {
 }
 
 function getToday(): string {
-  const d = new Date();
-  return d.toISOString().split("T")[0];
+  return toDateStr(new Date());
 }
 
 function addDays(dateStr: string, days: number): string {
   const [year, month, day] = dateStr.split("-").map(Number);
   const date = new Date(year, month - 1, day);
   date.setDate(date.getDate() + days);
-  return date.toISOString().split("T")[0];
+  return toDateStr(date);
 }
 
 export function DayView() {

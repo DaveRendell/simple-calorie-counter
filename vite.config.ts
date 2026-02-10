@@ -13,7 +13,7 @@ export default defineConfig({
         name: "Simple Calorie Counter",
         short_name: "Calories",
         description: "Track your daily calorie intake",
-        theme_color: "#4a9eed",
+        theme_color: "#ffffff",
         background_color: "#ffffff",
         display: "standalone",
         icons: [

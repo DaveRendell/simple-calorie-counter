@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDataStore } from "../hooks/useDataStore";
+import { useValidation, required, positiveNumber } from "../hooks/useValidation";
 import type { FoodEntry } from "../types";
 import "./EditEntry.css";
 
@@ -13,6 +14,14 @@ export function EditEntry() {
   const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const rules = useMemo(
+    () => ({
+      calories: [required("Calories"), positiveNumber("Calories")],
+    }),
+    [],
+  );
+  const { errors, validate, clearError } = useValidation(rules);
 
   useEffect(() => {
     async function loadEntry() {
@@ -28,13 +37,12 @@ export function EditEntry() {
 
   const handleSave = async () => {
     if (!entry) return;
-    const cal = parseInt(calories, 10);
-    if (!cal || cal <= 0) return;
+    if (!validate({ calories })) return;
 
     setSaving(true);
     await store.updateEntry({
       ...entry,
-      calories: cal,
+      calories: parseInt(calories, 10),
       description: description.trim(),
     });
     navigate(-1);
@@ -67,9 +75,19 @@ export function EditEntry() {
           type="number"
           inputMode="numeric"
           value={calories}
-          onChange={(e) => setCalories(e.target.value)}
+          onChange={(e) => {
+            setCalories(e.target.value);
+            clearError("calories");
+          }}
           onKeyDown={(e) => e.key === "Enter" && handleSave()}
+          aria-invalid={!!errors.calories}
+          aria-describedby={errors.calories ? "calories-error" : undefined}
         />
+        {errors.calories && (
+          <span id="calories-error" className="field-error" role="alert">
+            {errors.calories}
+          </span>
+        )}
       </div>
       <div className="form-field">
         <label htmlFor="description">Description (optional)</label>
@@ -81,11 +99,7 @@ export function EditEntry() {
           onKeyDown={(e) => e.key === "Enter" && handleSave()}
         />
       </div>
-      <button
-        className="save-button"
-        onClick={handleSave}
-        disabled={saving || !calories || parseInt(calories, 10) <= 0}
-      >
+      <button className="save-button" onClick={handleSave} disabled={saving}>
         {saving ? "Saving..." : "Save"}
       </button>
       <button className="delete-button" onClick={handleDelete}>

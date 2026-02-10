@@ -1,6 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDataStore } from "../hooks/useDataStore";
+import { useValidation, required, positiveNumber } from "../hooks/useValidation";
+import { toDateStr } from "../dateFormat";
 import "./EntryForm.css";
 
 export function EntryForm() {
@@ -12,22 +14,28 @@ export function EntryForm() {
   const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
 
+  const rules = useMemo(
+    () => ({
+      calories: [required("Calories"), positiveNumber("Calories")],
+    }),
+    [],
+  );
+  const { errors, validate, clearError } = useValidation(rules);
+
   const date =
-    (location.state as { date?: string } | null)?.date ??
-    new Date().toISOString().split("T")[0];
+    (location.state as { date?: string } | null)?.date ?? toDateStr(new Date());
 
   useEffect(() => {
     caloriesRef.current?.focus();
   }, []);
 
   const handleSave = async () => {
-    const cal = parseInt(calories, 10);
-    if (!cal || cal <= 0) return;
+    if (!validate({ calories })) return;
 
     setSaving(true);
     await store.addEntry({
       date,
-      calories: cal,
+      calories: parseInt(calories, 10),
       description: description.trim(),
       createdAt: Date.now(),
     });
@@ -45,9 +53,19 @@ export function EntryForm() {
           inputMode="numeric"
           placeholder="0"
           value={calories}
-          onChange={(e) => setCalories(e.target.value)}
+          onChange={(e) => {
+            setCalories(e.target.value);
+            clearError("calories");
+          }}
           onKeyDown={(e) => e.key === "Enter" && handleSave()}
+          aria-invalid={!!errors.calories}
+          aria-describedby={errors.calories ? "calories-error" : undefined}
         />
+        {errors.calories && (
+          <span id="calories-error" className="field-error" role="alert">
+            {errors.calories}
+          </span>
+        )}
       </div>
       <div className="form-field">
         <label htmlFor="description">Description (optional)</label>
@@ -60,11 +78,7 @@ export function EntryForm() {
           onKeyDown={(e) => e.key === "Enter" && handleSave()}
         />
       </div>
-      <button
-        className="save-button"
-        onClick={handleSave}
-        disabled={saving || !calories || parseInt(calories, 10) <= 0}
-      >
+      <button className="save-button" onClick={handleSave} disabled={saving}>
         {saving ? "Saving..." : "Save"}
       </button>
     </div>
