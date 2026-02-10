@@ -12,7 +12,7 @@ const store = new IndexedDBStore();
 export default function App() {
   return (
     <DataStoreProvider store={store}>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <Header />
         <Routes>
           <Route path="/" element={<DayView />} />
