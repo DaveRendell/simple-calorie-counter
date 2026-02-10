@@ -1,0 +1,24 @@
+.edit-entry {
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.edit-entry .loading {
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: 32px 0;
+}
+
+.delete-button {
+  background: none;
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+  font-weight: 500;
+}
+
+.delete-button:hover {
+  background: var(--color-danger);
+  color: white;
+}

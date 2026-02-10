@@ -1,0 +1,33 @@
+.progress-container {
+  padding: 0 16px 16px;
+}
+
+.progress-bar {
+  height: 8px;
+  background: var(--color-surface);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-fill.progress-over {
+  background: var(--color-danger);
+}
+
+.progress-text {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.progress-over-text {
+  color: var(--color-danger);
+  font-weight: 600;
+}

@@ -1,0 +1,60 @@
+.day-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.date-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.date-arrow {
+  background: none;
+  font-size: 20px;
+  padding: 8px 12px;
+  color: var(--color-primary);
+}
+
+.date-label {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.entries-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 16px;
+  overflow-y: auto;
+}
+
+.entries-empty {
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: 32px 0;
+  font-size: 14px;
+}
+
+.add-button-container {
+  padding: 16px;
+  position: sticky;
+  bottom: 0;
+  background: var(--color-bg);
+}
+
+.add-button {
+  width: 100%;
+  background: var(--color-primary);
+  color: white;
+  font-weight: 600;
+  padding: 14px;
+  font-size: 16px;
+}
+
+.add-button:hover {
+  background: #3a8edc;
+}
