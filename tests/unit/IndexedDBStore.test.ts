@@ -119,6 +119,40 @@ describe("IndexedDBStore", () => {
       ]);
     });
 
+    it("should reorder entries", async () => {
+      const e1 = await store.addEntry({
+        date: "2024-01-15",
+        calories: 200,
+        description: "First",
+        createdAt: 1000,
+        sortOrder: 1000,
+      });
+      const e2 = await store.addEntry({
+        date: "2024-01-15",
+        calories: 400,
+        description: "Second",
+        createdAt: 2000,
+        sortOrder: 2000,
+      });
+      const e3 = await store.addEntry({
+        date: "2024-01-15",
+        calories: 600,
+        description: "Third",
+        createdAt: 3000,
+        sortOrder: 3000,
+      });
+
+      // Reorder: Third, First, Second
+      await store.reorderEntries("2024-01-15", [e3.id, e1.id, e2.id]);
+
+      const entries = await store.getEntriesByDate("2024-01-15");
+      expect(entries.map((e) => e.description)).toEqual([
+        "Third",
+        "First",
+        "Second",
+      ]);
+    });
+
     it("should delete an entry", async () => {
       const entry = await store.addEntry({
         date: "2024-01-15",

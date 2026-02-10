@@ -4,6 +4,7 @@ export interface FoodEntry {
   calories: number;
   description: string;
   createdAt: number;
+  sortOrder?: number;
 }
 
 export interface Settings {

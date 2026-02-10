@@ -33,11 +33,13 @@ export function EntryForm() {
     if (!validate({ calories })) return;
 
     setSaving(true);
+    const now = Date.now();
     await store.addEntry({
       date,
       calories: parseInt(calories, 10),
       description: description.trim(),
-      createdAt: Date.now(),
+      createdAt: now,
+      sortOrder: now,
     });
     navigate(-1);
   };

@@ -32,7 +32,9 @@ export class IndexedDBStore implements DataStore {
   async getEntriesByDate(date: string): Promise<FoodEntry[]> {
     const db = await this.dbPromise;
     const entries = await db.getAllFromIndex(ENTRIES_STORE, "date", date);
-    return entries.sort((a, b) => a.createdAt - b.createdAt);
+    return entries.sort(
+      (a, b) => (a.sortOrder ?? a.createdAt) - (b.sortOrder ?? b.createdAt),
+    );
   }
 
   async getEntryById(id: string): Promise<FoodEntry | undefined> {
@@ -43,7 +45,11 @@ export class IndexedDBStore implements DataStore {
   async addEntry(entry: Omit<FoodEntry, "id">): Promise<FoodEntry> {
     const db = await this.dbPromise;
     const id = crypto.randomUUID();
-    const fullEntry: FoodEntry = { ...entry, id };
+    const fullEntry: FoodEntry = {
+      ...entry,
+      id,
+      sortOrder: entry.sortOrder ?? entry.createdAt,
+    };
     await db.add(ENTRIES_STORE, fullEntry);
     return fullEntry;
   }
@@ -57,6 +63,21 @@ export class IndexedDBStore implements DataStore {
   async deleteEntry(id: string): Promise<void> {
     const db = await this.dbPromise;
     await db.delete(ENTRIES_STORE, id);
+  }
+
+  async reorderEntries(date: string, orderedIds: string[]): Promise<void> {
+    const db = await this.dbPromise;
+    const entries = await db.getAllFromIndex(ENTRIES_STORE, "date", date);
+    const entryMap = new Map(entries.map((e) => [e.id, e]));
+    const tx = db.transaction(ENTRIES_STORE, "readwrite");
+    for (let i = 0; i < orderedIds.length; i++) {
+      const entry = entryMap.get(orderedIds[i]);
+      if (entry) {
+        entry.sortOrder = i;
+        tx.store.put(entry);
+      }
+    }
+    await tx.done;
   }
 
   async getSettings(): Promise<Settings> {

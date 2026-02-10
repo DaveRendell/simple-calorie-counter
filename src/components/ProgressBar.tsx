@@ -22,6 +22,12 @@ export function ProgressBar({
         <span className={over ? "progress-over-text" : ""}>{current}</span>
         {" / "}
         {target} cal
+        {target > 0 && (
+          <span className={over ? "progress-over-text" : ""}>
+            {" "}
+            ({over ? `${current - target} over` : `${target - current} remaining`})
+          </span>
+        )}
       </div>
     </div>
   );

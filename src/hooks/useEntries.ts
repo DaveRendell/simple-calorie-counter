@@ -35,6 +35,16 @@ export function useEntries(date: string) {
     setEntries((prev) => prev.filter((e) => e.id !== id));
   };
 
+  const reorderEntries = async (orderedIds: string[]) => {
+    await store.reorderEntries(date, orderedIds);
+    setEntries((prev) => {
+      const entryMap = new Map(prev.map((e) => [e.id, e]));
+      return orderedIds
+        .map((id) => entryMap.get(id))
+        .filter((e): e is FoodEntry => e !== undefined);
+    });
+  };
+
   const totalCalories = entries.reduce((sum, e) => sum + e.calories, 0);
 
   return {
@@ -44,6 +54,7 @@ export function useEntries(date: string) {
     addEntry,
     updateEntry,
     deleteEntry,
+    reorderEntries,
     refresh,
   };
 }

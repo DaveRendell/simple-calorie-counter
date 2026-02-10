@@ -7,5 +7,6 @@ export interface DataStore {
   updateEntry(entry: FoodEntry): Promise<FoodEntry>;
   deleteEntry(id: string): Promise<void>;
   getSettings(): Promise<Settings>;
+  reorderEntries(date: string, orderedIds: string[]): Promise<void>;
   updateSettings(settings: Partial<Settings>): Promise<void>;
 }

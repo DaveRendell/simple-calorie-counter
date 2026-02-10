@@ -1,5 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
 import { useEntries } from "../hooks/useEntries";
 import { useSettings } from "../hooks/useSettings";
 import { EntryCard } from "../components/EntryCard";
@@ -30,10 +44,29 @@ function addDays(dateStr: string, days: number): string {
 
 export function DayView() {
   const [date, setDate] = useState(getToday);
-  const { entries, totalCalories, loading } = useEntries(date);
+  const { entries, totalCalories, loading, reorderEntries } = useEntries(date);
   const { settings } = useSettings();
   const navigate = useNavigate();
   const isToday = date === getToday();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 200, tolerance: 5 },
+    }),
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = entries.findIndex((e) => e.id === active.id);
+    const newIndex = entries.findIndex((e) => e.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const newOrder = arrayMove(entries, oldIndex, newIndex);
+    reorderEntries(newOrder.map((e) => e.id));
+  };
 
   return (
     <div className="day-view">
@@ -68,7 +101,20 @@ export function DayView() {
         ) : entries.length === 0 ? (
           <p className="entries-empty">No entries yet</p>
         ) : (
-          entries.map((entry) => <EntryCard key={entry.id} entry={entry} />)
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={entries.map((e) => e.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {entries.map((entry) => (
+                <EntryCard key={entry.id} entry={entry} />
+              ))}
+            </SortableContext>
+          </DndContext>
         )}
       </div>
 
