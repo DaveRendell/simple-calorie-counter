@@ -5,6 +5,15 @@ export interface FoodEntry {
   description: string;
   createdAt: number;
   sortOrder?: number;
+  isFromPlaceholder?: boolean;
+}
+
+export interface Placeholder {
+  id: string;
+  description: string;
+  calories: number;
+  timeOfDay: string; // "HH:MM"
+  sortOrder?: number;
 }
 
 export interface Settings {

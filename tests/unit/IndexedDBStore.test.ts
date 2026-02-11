@@ -271,6 +271,156 @@ describe("IndexedDBStore", () => {
     });
   });
 
+  describe("placeholders", () => {
+    it("should add and retrieve a placeholder", async () => {
+      const placeholder = await store.addPlaceholder({
+        description: "Breakfast",
+        calories: 400,
+        timeOfDay: "08:00",
+      });
+
+      expect(placeholder.id).toBeDefined();
+      expect(placeholder.description).toBe("Breakfast");
+      expect(placeholder.calories).toBe(400);
+      expect(placeholder.timeOfDay).toBe("08:00");
+
+      const all = await store.getPlaceholders();
+      expect(all).toHaveLength(1);
+      expect(all[0].id).toBe(placeholder.id);
+    });
+
+    it("should get placeholder by id", async () => {
+      const placeholder = await store.addPlaceholder({
+        description: "Lunch",
+        calories: 600,
+        timeOfDay: "12:00",
+      });
+
+      const found = await store.getPlaceholderById(placeholder.id);
+      expect(found).toBeDefined();
+      expect(found!.description).toBe("Lunch");
+    });
+
+    it("should return undefined for non-existent placeholder id", async () => {
+      const found = await store.getPlaceholderById("non-existent");
+      expect(found).toBeUndefined();
+    });
+
+    it("should update a placeholder", async () => {
+      const placeholder = await store.addPlaceholder({
+        description: "Lunch",
+        calories: 600,
+        timeOfDay: "12:00",
+      });
+
+      await store.updatePlaceholder({
+        ...placeholder,
+        calories: 700,
+        description: "Big Lunch",
+      });
+
+      const found = await store.getPlaceholderById(placeholder.id);
+      expect(found!.calories).toBe(700);
+      expect(found!.description).toBe("Big Lunch");
+    });
+
+    it("should delete a placeholder", async () => {
+      const placeholder = await store.addPlaceholder({
+        description: "Snack",
+        calories: 200,
+        timeOfDay: "15:00",
+      });
+
+      await store.deletePlaceholder(placeholder.id);
+
+      const all = await store.getPlaceholders();
+      expect(all).toHaveLength(0);
+    });
+
+    it("should sort placeholders by sortOrder", async () => {
+      await store.addPlaceholder({
+        description: "Dinner",
+        calories: 800,
+        timeOfDay: "19:00",
+        sortOrder: 2,
+      });
+      await store.addPlaceholder({
+        description: "Breakfast",
+        calories: 400,
+        timeOfDay: "08:00",
+        sortOrder: 0,
+      });
+      await store.addPlaceholder({
+        description: "Lunch",
+        calories: 600,
+        timeOfDay: "12:00",
+        sortOrder: 1,
+      });
+
+      const all = await store.getPlaceholders();
+      expect(all.map((p) => p.description)).toEqual([
+        "Breakfast",
+        "Lunch",
+        "Dinner",
+      ]);
+    });
+
+    it("should reorder placeholders", async () => {
+      const p1 = await store.addPlaceholder({
+        description: "Breakfast",
+        calories: 400,
+        timeOfDay: "08:00",
+      });
+      const p2 = await store.addPlaceholder({
+        description: "Lunch",
+        calories: 600,
+        timeOfDay: "12:00",
+      });
+      const p3 = await store.addPlaceholder({
+        description: "Dinner",
+        calories: 800,
+        timeOfDay: "19:00",
+      });
+
+      await store.reorderPlaceholders([p3.id, p1.id, p2.id]);
+
+      const all = await store.getPlaceholders();
+      expect(all.map((p) => p.description)).toEqual([
+        "Dinner",
+        "Breakfast",
+        "Lunch",
+      ]);
+    });
+
+    it("should return empty array when no placeholders exist", async () => {
+      const all = await store.getPlaceholders();
+      expect(all).toHaveLength(0);
+    });
+  });
+
+  describe("getRecentEntries filtering", () => {
+    it("should exclude placeholder-generated entries from recent", async () => {
+      await store.addEntry({
+        date: "2024-01-15",
+        calories: 300,
+        description: "Oatmeal",
+        createdAt: 1000,
+        isFromPlaceholder: false,
+      });
+      await store.addEntry({
+        date: "2024-01-15",
+        calories: 400,
+        description: "Breakfast Placeholder",
+        createdAt: 2000,
+        isFromPlaceholder: true,
+      });
+
+      const recent = await store.getRecentEntries();
+      expect(recent).toHaveLength(1);
+      expect(recent[0].description).toBe("Oatmeal");
+    });
+  });
+
   describe("settings", () => {
     it("should return default settings initially", async () => {
       const settings = await store.getSettings();

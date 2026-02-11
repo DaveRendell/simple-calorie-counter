@@ -65,3 +65,14 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.entry-card--placeholder {
+  border-left: 3px solid var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.entry-time {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}

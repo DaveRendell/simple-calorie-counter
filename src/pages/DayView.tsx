@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   DndContext,
@@ -16,6 +16,7 @@ import {
 } from "@dnd-kit/sortable";
 import { useEntries } from "../hooks/useEntries";
 import { useSettings } from "../hooks/useSettings";
+import { useDataStore } from "../hooks/useDataStore";
 import { EntryCard } from "../components/EntryCard";
 import { ProgressBar } from "../components/ProgressBar";
 import { toDateStr } from "../dateFormat";
@@ -44,10 +45,44 @@ function addDays(dateStr: string, days: number): string {
 
 export function DayView() {
   const [date, setDate] = useState(getToday);
-  const { entries, totalCalories, loading, reorderEntries } = useEntries(date);
+  const { entries, totalCalories, loading, reorderEntries, refresh } =
+    useEntries(date);
   const { settings } = useSettings();
+  const store = useDataStore();
   const navigate = useNavigate();
   const isToday = date === getToday();
+  const populatedRef = useRef(false);
+
+  useEffect(() => {
+    populatedRef.current = false;
+  }, [date]);
+
+  useEffect(() => {
+    if (loading || entries.length > 0 || !isToday || populatedRef.current)
+      return;
+    populatedRef.current = true;
+
+    (async () => {
+      const placeholders = await store.getPlaceholders();
+      if (placeholders.length === 0) return;
+
+      for (const p of placeholders) {
+        const [h, m] = p.timeOfDay.split(":").map(Number);
+        const d = new Date();
+        d.setHours(h, m, 0, 0);
+        const ts = d.getTime();
+        await store.addEntry({
+          date,
+          calories: p.calories,
+          description: p.description,
+          createdAt: ts,
+          sortOrder: ts,
+          isFromPlaceholder: true,
+        });
+      }
+      refresh();
+    })();
+  }, [loading, entries.length, isToday, date, store, refresh]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -111,7 +146,11 @@ export function DayView() {
               strategy={verticalListSortingStrategy}
             >
               {entries.map((entry) => (
-                <EntryCard key={entry.id} entry={entry} />
+                <EntryCard
+                  key={entry.id}
+                  entry={entry}
+                  variant={entry.isFromPlaceholder ? "placeholder" : "default"}
+                />
               ))}
             </SortableContext>
           </DndContext>

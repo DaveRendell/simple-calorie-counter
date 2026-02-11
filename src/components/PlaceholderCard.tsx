@@ -1,16 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { FoodEntry } from "../types";
+import type { Placeholder } from "../types";
 import "./EntryCard.css";
 
-export function EntryCard({
-  entry,
-  variant = "default",
-}: {
-  entry: FoodEntry;
-  variant?: "default" | "placeholder";
-}) {
+export function PlaceholderCard({ placeholder }: { placeholder: Placeholder }) {
   const navigate = useNavigate();
   const {
     attributes,
@@ -19,7 +13,7 @@ export function EntryCard({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: entry.id });
+  } = useSortable({ id: placeholder.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -30,7 +24,7 @@ export function EntryCard({
     <div
       ref={setNodeRef}
       style={style}
-      className={`entry-card${isDragging ? " entry-card--dragging" : ""}${variant === "placeholder" ? " entry-card--placeholder" : ""}`}
+      className={`entry-card entry-card--placeholder${isDragging ? " entry-card--dragging" : ""}`}
     >
       <span
         className="drag-handle"
@@ -42,12 +36,11 @@ export function EntryCard({
       </span>
       <button
         className="entry-card-content"
-        onClick={() => navigate(`/edit/${entry.id}`)}
+        onClick={() => navigate(`/placeholders/edit/${placeholder.id}`)}
       >
-        <span className="entry-calories">{entry.calories} cal</span>
-        <span className="entry-description">
-          {entry.description || "No description"}
-        </span>
+        <span className="entry-calories">{placeholder.calories} cal</span>
+        <span className="entry-description">{placeholder.description}</span>
+        <span className="entry-time">{placeholder.timeOfDay}</span>
       </button>
     </div>
   );

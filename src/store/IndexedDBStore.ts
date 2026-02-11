@@ -1,11 +1,12 @@
 import { openDB, type IDBPDatabase } from "idb";
-import type { FoodEntry, Settings } from "../types";
+import type { FoodEntry, Placeholder, Settings } from "../types";
 import type { DataStore } from "./DataStore";
 
 const DB_NAME = "calorie-counter";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const ENTRIES_STORE = "entries";
 const SETTINGS_STORE = "settings";
+const PLACEHOLDERS_STORE = "placeholders";
 const SETTINGS_KEY = "user-settings";
 
 const DEFAULT_SETTINGS: Settings = {
@@ -14,10 +15,26 @@ const DEFAULT_SETTINGS: Settings = {
 
 function initDB(): Promise<IDBPDatabase> {
   return openDB(DB_NAME, DB_VERSION, {
-    upgrade(db) {
-      const entryStore = db.createObjectStore(ENTRIES_STORE, { keyPath: "id" });
-      entryStore.createIndex("date", "date", { unique: false });
-      db.createObjectStore(SETTINGS_STORE);
+    upgrade(db, oldVersion) {
+      if (oldVersion < 1) {
+        const entryStore = db.createObjectStore(ENTRIES_STORE, { keyPath: "id" });
+        entryStore.createIndex("date", "date", { unique: false });
+        db.createObjectStore(SETTINGS_STORE);
+      }
+      if (oldVersion < 2) {
+        db.createObjectStore(PLACEHOLDERS_STORE, { keyPath: "id" });
+      }
+    },
+    blocked() {
+      // Old connections are preventing the upgrade — reload to clear them.
+      // This can happen when another tab or a stale HMR connection holds the
+      // v1 database open and won't close it. A reload drops all connections.
+      window.location.reload();
+    },
+    blocking(_currentVersion, _blockedVersion, event) {
+      // This connection is blocking a newer version from opening.
+      // Close it so the upgrade can proceed.
+      (event.target as IDBDatabase).close();
     },
   });
 }
@@ -83,7 +100,9 @@ export class IndexedDBStore implements DataStore {
   async getRecentEntries(): Promise<FoodEntry[]> {
     const db = await this.dbPromise;
     const all = await db.getAll(ENTRIES_STORE);
-    const withDesc = all.filter((e) => e.description && e.description.trim());
+    const withDesc = all.filter(
+      (e) => e.description && e.description.trim() && !e.isFromPlaceholder,
+    );
     const deduped = new Map<string, FoodEntry>();
     for (const entry of withDesc) {
       const key = `${entry.description.toLowerCase()}\0${entry.calories}`;
@@ -107,5 +126,57 @@ export class IndexedDBStore implements DataStore {
     const db = await this.dbPromise;
     const current = await this.getSettings();
     await db.put(SETTINGS_STORE, { ...current, ...settings }, SETTINGS_KEY);
+  }
+
+  async getPlaceholders(): Promise<Placeholder[]> {
+    const db = await this.dbPromise;
+    const all = await db.getAll(PLACEHOLDERS_STORE);
+    return all.sort(
+      (a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0),
+    );
+  }
+
+  async getPlaceholderById(id: string): Promise<Placeholder | undefined> {
+    const db = await this.dbPromise;
+    return db.get(PLACEHOLDERS_STORE, id);
+  }
+
+  async addPlaceholder(placeholder: Omit<Placeholder, "id">): Promise<Placeholder> {
+    const db = await this.dbPromise;
+    const id = crypto.randomUUID();
+    const all = await db.getAll(PLACEHOLDERS_STORE);
+    const full: Placeholder = {
+      ...placeholder,
+      id,
+      sortOrder: placeholder.sortOrder ?? all.length,
+    };
+    await db.add(PLACEHOLDERS_STORE, full);
+    return full;
+  }
+
+  async updatePlaceholder(placeholder: Placeholder): Promise<Placeholder> {
+    const db = await this.dbPromise;
+    await db.put(PLACEHOLDERS_STORE, placeholder);
+    return placeholder;
+  }
+
+  async deletePlaceholder(id: string): Promise<void> {
+    const db = await this.dbPromise;
+    await db.delete(PLACEHOLDERS_STORE, id);
+  }
+
+  async reorderPlaceholders(orderedIds: string[]): Promise<void> {
+    const db = await this.dbPromise;
+    const all = await db.getAll(PLACEHOLDERS_STORE);
+    const map = new Map(all.map((p) => [p.id, p]));
+    const tx = db.transaction(PLACEHOLDERS_STORE, "readwrite");
+    for (let i = 0; i < orderedIds.length; i++) {
+      const placeholder = map.get(orderedIds[i]);
+      if (placeholder) {
+        placeholder.sortOrder = i;
+        tx.store.put(placeholder);
+      }
+    }
+    await tx.done;
   }
 }

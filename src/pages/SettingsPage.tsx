@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSettings } from "../hooks/useSettings";
 import "./SettingsPage.css";
 
 export function SettingsPage() {
   const { settings, loading, updateSettings } = useSettings();
+  const navigate = useNavigate();
   const [target, setTarget] = useState("");
 
   useEffect(() => {
@@ -41,6 +43,12 @@ export function SettingsPage() {
           }}
         />
       </div>
+      <button
+        className="settings-link-button"
+        onClick={() => navigate("/placeholders")}
+      >
+        Manage Meal Placeholders
+      </button>
     </div>
   );
 }
