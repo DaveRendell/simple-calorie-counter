@@ -12,6 +12,11 @@ export function ProgressBar({
 
   return (
     <div className="progress-container">
+      {target > 0 && (
+        <div className={`progress-remaining ${over ? "progress-over-text" : ""}`}>
+          {over ? `${current - target} over` : `${target - current} remaining`}
+        </div>
+      )}
       <div className="progress-bar">
         <div
           className={`progress-fill ${over ? "progress-over" : ""}`}
@@ -22,12 +27,6 @@ export function ProgressBar({
         <span className={over ? "progress-over-text" : ""}>{current}</span>
         {" / "}
         {target} cal
-        {target > 0 && (
-          <span className={over ? "progress-over-text" : ""}>
-            {" "}
-            ({over ? `${current - target} over` : `${target - current} remaining`})
-          </span>
-        )}
       </div>
     </div>
   );
