@@ -58,11 +58,14 @@ export function DayView() {
   }, [date]);
 
   useEffect(() => {
-    if (loading || entries.length > 0 || !isToday || populatedRef.current)
-      return;
+    if (loading || !isToday || populatedRef.current) return;
     populatedRef.current = true;
 
     (async () => {
+      // Query the DB directly — React state may be stale after a date change
+      const currentEntries = await store.getEntriesByDate(date);
+      if (currentEntries.length > 0) return;
+
       const placeholders = await store.getPlaceholders();
       if (placeholders.length === 0) return;
 
@@ -82,7 +85,7 @@ export function DayView() {
       }
       refresh();
     })();
-  }, [loading, entries.length, isToday, date, store, refresh]);
+  }, [loading, isToday, date, store, refresh]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
