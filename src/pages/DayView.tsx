@@ -125,6 +125,12 @@ export function DayView() {
         >
           + Add Entry
         </button>
+        <button
+          className="recent-button"
+          onClick={() => navigate("/recent", { state: { date } })}
+        >
+          Recent
+        </button>
       </div>
     </div>
   );

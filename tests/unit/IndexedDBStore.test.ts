@@ -168,6 +168,109 @@ describe("IndexedDBStore", () => {
     });
   });
 
+  describe("getRecentEntries", () => {
+    it("should return entries sorted by most recent first", async () => {
+      await store.addEntry({
+        date: "2024-01-15",
+        calories: 300,
+        description: "Oatmeal",
+        createdAt: 1000,
+      });
+      await store.addEntry({
+        date: "2024-01-16",
+        calories: 500,
+        description: "Salad",
+        createdAt: 3000,
+      });
+      await store.addEntry({
+        date: "2024-01-15",
+        calories: 400,
+        description: "Sandwich",
+        createdAt: 2000,
+      });
+
+      const recent = await store.getRecentEntries();
+      expect(recent.map((e) => e.description)).toEqual([
+        "Salad",
+        "Sandwich",
+        "Oatmeal",
+      ]);
+    });
+
+    it("should exclude entries with empty description", async () => {
+      await store.addEntry({
+        date: "2024-01-15",
+        calories: 300,
+        description: "Oatmeal",
+        createdAt: 1000,
+      });
+      await store.addEntry({
+        date: "2024-01-15",
+        calories: 500,
+        description: "",
+        createdAt: 2000,
+      });
+      await store.addEntry({
+        date: "2024-01-15",
+        calories: 400,
+        description: "   ",
+        createdAt: 3000,
+      });
+
+      const recent = await store.getRecentEntries();
+      expect(recent).toHaveLength(1);
+      expect(recent[0].description).toBe("Oatmeal");
+    });
+
+    it("should deduplicate by (description, calories) keeping most recent", async () => {
+      await store.addEntry({
+        date: "2024-01-15",
+        calories: 300,
+        description: "Oatmeal",
+        createdAt: 1000,
+      });
+      await store.addEntry({
+        date: "2024-01-16",
+        calories: 300,
+        description: "oatmeal",
+        createdAt: 3000,
+      });
+      await store.addEntry({
+        date: "2024-01-17",
+        calories: 500,
+        description: "Oatmeal",
+        createdAt: 2000,
+      });
+
+      const recent = await store.getRecentEntries();
+      // "oatmeal" 300 cal at 3000 and "Oatmeal" 500 cal at 2000
+      expect(recent).toHaveLength(2);
+      expect(recent[0].createdAt).toBe(3000);
+      expect(recent[0].calories).toBe(300);
+      expect(recent[1].createdAt).toBe(2000);
+      expect(recent[1].calories).toBe(500);
+    });
+
+    it("should respect the 100-entry limit", async () => {
+      for (let i = 0; i < 110; i++) {
+        await store.addEntry({
+          date: "2024-01-15",
+          calories: i,
+          description: `Item ${i}`,
+          createdAt: i,
+        });
+      }
+
+      const recent = await store.getRecentEntries();
+      expect(recent).toHaveLength(100);
+    });
+
+    it("should return empty array when no entries exist", async () => {
+      const recent = await store.getRecentEntries();
+      expect(recent).toHaveLength(0);
+    });
+  });
+
   describe("settings", () => {
     it("should return default settings initially", async () => {
       const settings = await store.getSettings();

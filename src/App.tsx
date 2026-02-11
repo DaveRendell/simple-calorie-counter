@@ -6,6 +6,7 @@ import { DayView } from "./pages/DayView";
 import { EntryForm } from "./pages/EntryForm";
 import { EditEntry } from "./pages/EditEntry";
 import { SettingsPage } from "./pages/SettingsPage";
+import { RecentEntries } from "./pages/RecentEntries";
 
 const store = new IndexedDBStore();
 
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/add" element={<EntryForm />} />
           <Route path="/edit/:id" element={<EditEntry />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/recent" element={<RecentEntries />} />
         </Routes>
       </BrowserRouter>
     </DataStoreProvider>

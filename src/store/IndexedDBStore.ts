@@ -80,6 +80,23 @@ export class IndexedDBStore implements DataStore {
     await tx.done;
   }
 
+  async getRecentEntries(): Promise<FoodEntry[]> {
+    const db = await this.dbPromise;
+    const all = await db.getAll(ENTRIES_STORE);
+    const withDesc = all.filter((e) => e.description && e.description.trim());
+    const deduped = new Map<string, FoodEntry>();
+    for (const entry of withDesc) {
+      const key = `${entry.description.toLowerCase()}\0${entry.calories}`;
+      const existing = deduped.get(key);
+      if (!existing || entry.createdAt > existing.createdAt) {
+        deduped.set(key, entry);
+      }
+    }
+    return [...deduped.values()]
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, 100);
+  }
+
   async getSettings(): Promise<Settings> {
     const db = await this.dbPromise;
     const settings = await db.get(SETTINGS_STORE, SETTINGS_KEY);

@@ -8,6 +8,7 @@ import { DayView } from "../../src/pages/DayView";
 import { EntryForm } from "../../src/pages/EntryForm";
 import { EditEntry } from "../../src/pages/EditEntry";
 import { SettingsPage } from "../../src/pages/SettingsPage";
+import { RecentEntries } from "../../src/pages/RecentEntries";
 import "fake-indexeddb/auto";
 
 export function renderApp(initialRoute = "/") {
@@ -25,6 +26,7 @@ export function renderApp(initialRoute = "/") {
             <Route path="/add" element={<EntryForm />} />
             <Route path="/edit/:id" element={<EditEntry />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/recent" element={<RecentEntries />} />
           </Routes>
         </MemoryRouter>
       </DataStoreProvider>,

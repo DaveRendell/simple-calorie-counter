@@ -55,6 +55,7 @@
   font-weight: 600;
   font-size: 16px;
   white-space: nowrap;
+  width: 5em;
 }
 
 .entry-description {
