@@ -11,7 +11,7 @@ describe("RecentEntries", () => {
     const { user } = renderApp();
     await screen.findByText("Today");
 
-    await user.click(screen.getByText("Recent"));
+    await user.click(screen.getByLabelText("Recent entries"));
     expect(
       await screen.findByPlaceholderText("Search recent entries..."),
     ).toBeInTheDocument();

@@ -21,6 +21,7 @@ import { EntryCard } from "../components/EntryCard";
 import { ProgressBar } from "../components/ProgressBar";
 import { toDateStr } from "../dateFormat";
 import "./DayView.css";
+import { ADD, HISTORY, LEFT, RIGHT } from "../icons";
 
 function formatDate(dateStr: string): string {
   const [year, month, day] = dateStr.split("-").map(Number);
@@ -114,7 +115,7 @@ export function DayView() {
           onClick={() => setDate((d) => addDays(d, -1))}
           aria-label="Previous day"
         >
-          &larr;
+          {LEFT}
         </button>
         <span className="date-label">
           {isToday ? "Today" : formatDate(date)}
@@ -124,7 +125,7 @@ export function DayView() {
           onClick={() => setDate((d) => addDays(d, 1))}
           aria-label="Next day"
         >
-          &rarr;
+          {RIGHT}
         </button>
       </div>
 
@@ -165,13 +166,14 @@ export function DayView() {
           className="add-button"
           onClick={() => navigate("/add", { state: { date } })}
         >
-          + Add Entry
+          {ADD} Log Calories
         </button>
         <button
           className="recent-button"
           onClick={() => navigate("/recent", { state: { date } })}
+          aria-label="Recent entries"
         >
-          Recent
+          {HISTORY}
         </button>
       </div>
     </div>

@@ -16,6 +16,7 @@ import {
 import { usePlaceholders } from "../hooks/usePlaceholders";
 import { PlaceholderCard } from "../components/PlaceholderCard";
 import "./PlaceholderList.css";
+import { ADD } from "../icons";
 
 export function PlaceholderList() {
   const { placeholders, loading, reorderPlaceholders } = usePlaceholders();
@@ -73,7 +74,7 @@ export function PlaceholderList() {
           className="placeholder-add-button"
           onClick={() => navigate("/placeholders/add")}
         >
-          + Add Placeholder
+          {ADD} Add Placeholder
         </button>
       </div>
     </div>

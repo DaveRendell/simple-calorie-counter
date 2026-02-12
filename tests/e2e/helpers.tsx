@@ -32,7 +32,10 @@ export function renderApp(initialRoute = "/") {
             <Route path="/recent" element={<RecentEntries />} />
             <Route path="/placeholders" element={<PlaceholderList />} />
             <Route path="/placeholders/add" element={<PlaceholderForm />} />
-            <Route path="/placeholders/edit/:id" element={<EditPlaceholder />} />
+            <Route
+              path="/placeholders/edit/:id"
+              element={<EditPlaceholder />}
+            />
           </Routes>
         </MemoryRouter>
       </DataStoreProvider>,

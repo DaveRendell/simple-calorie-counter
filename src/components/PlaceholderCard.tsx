@@ -26,14 +26,6 @@ export function PlaceholderCard({ placeholder }: { placeholder: Placeholder }) {
       style={style}
       className={`entry-card entry-card--placeholder${isDragging ? " entry-card--dragging" : ""}`}
     >
-      <span
-        className="drag-handle"
-        aria-label="Drag to reorder"
-        {...attributes}
-        {...listeners}
-      >
-        ≡
-      </span>
       <button
         className="entry-card-content"
         onClick={() => navigate(`/placeholders/edit/${placeholder.id}`)}
@@ -42,6 +34,14 @@ export function PlaceholderCard({ placeholder }: { placeholder: Placeholder }) {
         <span className="entry-description">{placeholder.description}</span>
         <span className="entry-time">{placeholder.timeOfDay}</span>
       </button>
+      <span
+        className="drag-handle"
+        aria-label="Drag to reorder"
+        {...attributes}
+        {...listeners}
+      >
+        ≡
+      </span>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import "./Header.css";
+import { LEFT, SETTINGS } from "../icons";
 
 export function Header() {
   const navigate = useNavigate();
@@ -9,8 +10,12 @@ export function Header() {
   return (
     <header className="header">
       {!isHome ? (
-        <button className="header-back" onClick={() => navigate(-1)}>
-          &larr;
+        <button
+          className="header-back"
+          onClick={() => navigate(-1)}
+          aria-label="Back"
+        >
+          {LEFT}
         </button>
       ) : (
         <div className="header-spacer" />
@@ -22,7 +27,7 @@ export function Header() {
           onClick={() => navigate("/settings")}
           aria-label="Settings"
         >
-          &#9881;
+          {SETTINGS}
         </button>
       ) : (
         <div className="header-spacer" />

@@ -11,7 +11,7 @@ describe("DayView", () => {
     renderApp();
     expect(await screen.findByText("No entries yet")).toBeInTheDocument();
     expect(screen.getByText("Today")).toBeInTheDocument();
-    expect(screen.getByText("+ Add Entry")).toBeInTheDocument();
+    expect(screen.getByText("Log Calories")).toBeInTheDocument();
   });
 
   it("should show progress bar with default target", async () => {

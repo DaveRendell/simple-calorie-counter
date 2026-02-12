@@ -1,7 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDataStore } from "../hooks/useDataStore";
-import { useValidation, required, positiveNumber } from "../hooks/useValidation";
+import {
+  useValidation,
+  required,
+  positiveNumber,
+} from "../hooks/useValidation";
 import type { FoodEntry } from "../types";
 import "./EditEntry.css";
 

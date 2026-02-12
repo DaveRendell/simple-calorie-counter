@@ -1,7 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDataStore } from "../hooks/useDataStore";
-import { useValidation, required, positiveNumber } from "../hooks/useValidation";
+import {
+  useValidation,
+  required,
+  positiveNumber,
+} from "../hooks/useValidation";
 import type { Placeholder } from "../types";
 import "./EditEntry.css";
 
@@ -105,7 +109,9 @@ export function EditPlaceholder() {
           }}
           onKeyDown={(e) => e.key === "Enter" && handleSave()}
           aria-invalid={!!errors.description}
-          aria-describedby={errors.description ? "description-error" : undefined}
+          aria-describedby={
+            errors.description ? "description-error" : undefined
+          }
         />
         {errors.description && (
           <span id="description-error" className="field-error" role="alert">

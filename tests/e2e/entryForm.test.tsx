@@ -10,7 +10,7 @@ describe("EntryForm", () => {
   it("should add an entry and see it on the day view", async () => {
     const { user } = renderApp();
 
-    const addButton = await screen.findByText("+ Add Entry");
+    const addButton = await screen.findByText("Log Calories");
     await user.click(addButton);
 
     const caloriesInput = screen.getByLabelText("Calories");
@@ -28,7 +28,7 @@ describe("EntryForm", () => {
   it("should show validation error when saving with empty calories", async () => {
     const { user } = renderApp();
 
-    await user.click(await screen.findByText("+ Add Entry"));
+    await user.click(await screen.findByText("Log Calories"));
     await user.click(screen.getByText("Save"));
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
@@ -39,7 +39,7 @@ describe("EntryForm", () => {
   it("should show validation error for zero calories", async () => {
     const { user } = renderApp();
 
-    await user.click(await screen.findByText("+ Add Entry"));
+    await user.click(await screen.findByText("Log Calories"));
     await user.type(screen.getByLabelText("Calories"), "0");
     await user.click(screen.getByText("Save"));
 
@@ -51,7 +51,7 @@ describe("EntryForm", () => {
   it("should show validation error for negative calories", async () => {
     const { user } = renderApp();
 
-    await user.click(await screen.findByText("+ Add Entry"));
+    await user.click(await screen.findByText("Log Calories"));
     await user.type(screen.getByLabelText("Calories"), "-100");
     await user.click(screen.getByText("Save"));
 
@@ -63,7 +63,7 @@ describe("EntryForm", () => {
   it("should clear validation error when user starts typing", async () => {
     const { user } = renderApp();
 
-    await user.click(await screen.findByText("+ Add Entry"));
+    await user.click(await screen.findByText("Log Calories"));
     await user.click(screen.getByText("Save"));
     expect(await screen.findByRole("alert")).toBeInTheDocument();
 

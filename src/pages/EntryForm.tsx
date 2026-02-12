@@ -1,7 +1,11 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDataStore } from "../hooks/useDataStore";
-import { useValidation, required, positiveNumber } from "../hooks/useValidation";
+import {
+  useValidation,
+  required,
+  positiveNumber,
+} from "../hooks/useValidation";
 import { toDateStr } from "../dateFormat";
 import "./EntryForm.css";
 

@@ -20,7 +20,7 @@ describe("Settings", () => {
     await user.type(input, "1500");
     await user.tab();
 
-    await user.click(screen.getByText("\u2190"));
+    await user.click(screen.getByLabelText("Back"));
 
     expect(await screen.findByText(/\/ 1500 cal/)).toBeInTheDocument();
   });

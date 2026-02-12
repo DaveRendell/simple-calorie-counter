@@ -13,7 +13,9 @@ export function ProgressBar({
   return (
     <div className="progress-container">
       {target > 0 && (
-        <div className={`progress-remaining ${over ? "progress-over-text" : ""}`}>
+        <div
+          className={`progress-remaining ${over ? "progress-over-text" : ""}`}
+        >
           {over ? `${current - target} over` : `${target - current} remaining`}
         </div>
       )}

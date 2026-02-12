@@ -4,6 +4,7 @@ import { useDataStore } from "../hooks/useDataStore";
 import { toDateStr } from "../dateFormat";
 import type { FoodEntry } from "../types";
 import "./RecentEntries.css";
+import { ADD } from "../icons";
 
 export function RecentEntries() {
   const store = useDataStore();
@@ -67,7 +68,7 @@ export function RecentEntries() {
                 onClick={() => handleAdd(entry)}
                 aria-label={`Add ${entry.description}`}
               >
-                +
+                {ADD}
               </button>
             </div>
           ))

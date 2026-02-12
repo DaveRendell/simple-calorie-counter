@@ -29,6 +29,10 @@
 
 .placeholder-add-button {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   background: var(--color-primary);
   color: white;
   font-weight: 600;

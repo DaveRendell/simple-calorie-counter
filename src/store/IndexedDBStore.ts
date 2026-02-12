@@ -17,7 +17,9 @@ function initDB(): Promise<IDBPDatabase> {
   return openDB(DB_NAME, DB_VERSION, {
     upgrade(db, oldVersion) {
       if (oldVersion < 1) {
-        const entryStore = db.createObjectStore(ENTRIES_STORE, { keyPath: "id" });
+        const entryStore = db.createObjectStore(ENTRIES_STORE, {
+          keyPath: "id",
+        });
         entryStore.createIndex("date", "date", { unique: false });
         db.createObjectStore(SETTINGS_STORE);
       }
@@ -131,9 +133,7 @@ export class IndexedDBStore implements DataStore {
   async getPlaceholders(): Promise<Placeholder[]> {
     const db = await this.dbPromise;
     const all = await db.getAll(PLACEHOLDERS_STORE);
-    return all.sort(
-      (a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0),
-    );
+    return all.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
   }
 
   async getPlaceholderById(id: string): Promise<Placeholder | undefined> {
@@ -141,7 +141,9 @@ export class IndexedDBStore implements DataStore {
     return db.get(PLACEHOLDERS_STORE, id);
   }
 
-  async addPlaceholder(placeholder: Omit<Placeholder, "id">): Promise<Placeholder> {
+  async addPlaceholder(
+    placeholder: Omit<Placeholder, "id">,
+  ): Promise<Placeholder> {
     const db = await this.dbPromise;
     const id = crypto.randomUUID();
     const all = await db.getAll(PLACEHOLDERS_STORE);

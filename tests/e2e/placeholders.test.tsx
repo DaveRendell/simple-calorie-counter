@@ -19,7 +19,7 @@ describe("Placeholders", () => {
     const { user } = renderApp("/placeholders");
     await screen.findByText("No placeholders yet");
 
-    await user.click(screen.getByText("+ Add Placeholder"));
+    await user.click(screen.getByText("Add Placeholder"));
 
     const caloriesInput = await screen.findByLabelText("Calories");
     await user.type(caloriesInput, "400");
@@ -192,8 +192,6 @@ describe("Placeholders", () => {
 
     renderApp("/recent");
     expect(await screen.findByText("Oatmeal")).toBeInTheDocument();
-    expect(
-      screen.queryByText("Breakfast Placeholder"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Breakfast Placeholder")).not.toBeInTheDocument();
   });
 });

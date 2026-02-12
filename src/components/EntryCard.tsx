@@ -32,14 +32,6 @@ export function EntryCard({
       style={style}
       className={`entry-card${isDragging ? " entry-card--dragging" : ""}${variant === "placeholder" ? " entry-card--placeholder" : ""}`}
     >
-      <span
-        className="drag-handle"
-        aria-label="Drag to reorder"
-        {...attributes}
-        {...listeners}
-      >
-        ≡
-      </span>
       <button
         className="entry-card-content"
         onClick={() => navigate(`/edit/${entry.id}`)}
@@ -49,6 +41,14 @@ export function EntryCard({
           {entry.description || "No description"}
         </span>
       </button>
+      <span
+        className="drag-handle"
+        aria-label="Drag to reorder"
+        {...attributes}
+        {...listeners}
+      >
+        ≡
+      </span>
     </div>
   );
 }
