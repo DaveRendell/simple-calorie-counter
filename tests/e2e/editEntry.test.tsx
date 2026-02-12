@@ -12,7 +12,7 @@ describe("EditEntry", () => {
     const { user, store } = renderApp();
     const today = toDateStr(new Date());
 
-    await store.addEntry({
+    await store.entries.add({
       date: today,
       calories: 200,
       description: "Snack",
@@ -40,7 +40,7 @@ describe("EditEntry", () => {
     const { user, store } = renderApp();
     const today = toDateStr(new Date());
 
-    await store.addEntry({
+    await store.entries.add({
       date: today,
       calories: 400,
       description: "Dinner",
@@ -67,7 +67,7 @@ describe("EditEntry", () => {
     const { user, store } = renderApp();
     const today = toDateStr(new Date());
 
-    await store.addEntry({
+    await store.entries.add({
       date: today,
       calories: 200,
       description: "Snack",

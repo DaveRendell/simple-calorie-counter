@@ -13,7 +13,7 @@ describe("IndexedDBStore", () => {
 
   describe("entries", () => {
     it("should add and retrieve an entry by date", async () => {
-      const entry = await store.addEntry({
+      const entry = await store.entries.add({
         date: "2024-01-15",
         calories: 500,
         description: "Lunch",
@@ -24,94 +24,94 @@ describe("IndexedDBStore", () => {
       expect(entry.calories).toBe(500);
       expect(entry.description).toBe("Lunch");
 
-      const entries = await store.getEntriesByDate("2024-01-15");
+      const entries = await store.entries.getByDate("2024-01-15");
       expect(entries).toHaveLength(1);
       expect(entries[0].id).toBe(entry.id);
     });
 
     it("should return empty array for date with no entries", async () => {
-      const entries = await store.getEntriesByDate("2024-01-15");
+      const entries = await store.entries.getByDate("2024-01-15");
       expect(entries).toHaveLength(0);
     });
 
     it("should only return entries for the requested date", async () => {
-      await store.addEntry({
+      await store.entries.add({
         date: "2024-01-15",
         calories: 500,
         description: "Day 1",
         createdAt: Date.now(),
       });
-      await store.addEntry({
+      await store.entries.add({
         date: "2024-01-16",
         calories: 300,
         description: "Day 2",
         createdAt: Date.now(),
       });
 
-      const entries = await store.getEntriesByDate("2024-01-15");
+      const entries = await store.entries.getByDate("2024-01-15");
       expect(entries).toHaveLength(1);
       expect(entries[0].description).toBe("Day 1");
     });
 
     it("should get entry by id", async () => {
-      const entry = await store.addEntry({
+      const entry = await store.entries.add({
         date: "2024-01-15",
         calories: 500,
         description: "Test",
         createdAt: Date.now(),
       });
 
-      const found = await store.getEntryById(entry.id);
+      const found = await store.entries.getById(entry.id);
       expect(found).toBeDefined();
       expect(found!.calories).toBe(500);
     });
 
     it("should return undefined for non-existent entry id", async () => {
-      const found = await store.getEntryById("non-existent");
+      const found = await store.entries.getById("non-existent");
       expect(found).toBeUndefined();
     });
 
     it("should update an entry", async () => {
-      const entry = await store.addEntry({
+      const entry = await store.entries.add({
         date: "2024-01-15",
         calories: 500,
         description: "Lunch",
         createdAt: Date.now(),
       });
 
-      await store.updateEntry({
+      await store.entries.update({
         ...entry,
         calories: 600,
         description: "Big lunch",
       });
 
-      const entries = await store.getEntriesByDate("2024-01-15");
+      const entries = await store.entries.getByDate("2024-01-15");
       expect(entries).toHaveLength(1);
       expect(entries[0].calories).toBe(600);
       expect(entries[0].description).toBe("Big lunch");
     });
 
     it("should return entries sorted by createdAt", async () => {
-      await store.addEntry({
+      await store.entries.add({
         date: "2024-01-15",
         calories: 200,
         description: "Snack",
         createdAt: 3000,
       });
-      await store.addEntry({
+      await store.entries.add({
         date: "2024-01-15",
         calories: 500,
         description: "Breakfast",
         createdAt: 1000,
       });
-      await store.addEntry({
+      await store.entries.add({
         date: "2024-01-15",
         calories: 800,
         description: "Lunch",
         createdAt: 2000,
       });
 
-      const entries = await store.getEntriesByDate("2024-01-15");
+      const entries = await store.entries.getByDate("2024-01-15");
       expect(entries.map((e) => e.description)).toEqual([
         "Breakfast",
         "Lunch",
@@ -120,21 +120,21 @@ describe("IndexedDBStore", () => {
     });
 
     it("should reorder entries", async () => {
-      const e1 = await store.addEntry({
+      const e1 = await store.entries.add({
         date: "2024-01-15",
         calories: 200,
         description: "First",
         createdAt: 1000,
         sortOrder: 1000,
       });
-      const e2 = await store.addEntry({
+      const e2 = await store.entries.add({
         date: "2024-01-15",
         calories: 400,
         description: "Second",
         createdAt: 2000,
         sortOrder: 2000,
       });
-      const e3 = await store.addEntry({
+      const e3 = await store.entries.add({
         date: "2024-01-15",
         calories: 600,
         description: "Third",
@@ -143,9 +143,9 @@ describe("IndexedDBStore", () => {
       });
 
       // Reorder: Third, First, Second
-      await store.reorderEntries("2024-01-15", [e3.id, e1.id, e2.id]);
+      await store.entries.reorder([e3.id, e1.id, e2.id]);
 
-      const entries = await store.getEntriesByDate("2024-01-15");
+      const entries = await store.entries.getByDate("2024-01-15");
       expect(entries.map((e) => e.description)).toEqual([
         "Third",
         "First",
@@ -154,42 +154,42 @@ describe("IndexedDBStore", () => {
     });
 
     it("should delete an entry", async () => {
-      const entry = await store.addEntry({
+      const entry = await store.entries.add({
         date: "2024-01-15",
         calories: 500,
         description: "Lunch",
         createdAt: Date.now(),
       });
 
-      await store.deleteEntry(entry.id);
+      await store.entries.delete(entry.id);
 
-      const entries = await store.getEntriesByDate("2024-01-15");
+      const entries = await store.entries.getByDate("2024-01-15");
       expect(entries).toHaveLength(0);
     });
   });
 
-  describe("getRecentEntries", () => {
+  describe("getRecent", () => {
     it("should return entries sorted by most recent first", async () => {
-      await store.addEntry({
+      await store.entries.add({
         date: "2024-01-15",
         calories: 300,
         description: "Oatmeal",
         createdAt: 1000,
       });
-      await store.addEntry({
+      await store.entries.add({
         date: "2024-01-16",
         calories: 500,
         description: "Salad",
         createdAt: 3000,
       });
-      await store.addEntry({
+      await store.entries.add({
         date: "2024-01-15",
         calories: 400,
         description: "Sandwich",
         createdAt: 2000,
       });
 
-      const recent = await store.getRecentEntries();
+      const recent = await store.entries.getRecent();
       expect(recent.map((e) => e.description)).toEqual([
         "Salad",
         "Sandwich",
@@ -198,51 +198,51 @@ describe("IndexedDBStore", () => {
     });
 
     it("should exclude entries with empty description", async () => {
-      await store.addEntry({
+      await store.entries.add({
         date: "2024-01-15",
         calories: 300,
         description: "Oatmeal",
         createdAt: 1000,
       });
-      await store.addEntry({
+      await store.entries.add({
         date: "2024-01-15",
         calories: 500,
         description: "",
         createdAt: 2000,
       });
-      await store.addEntry({
+      await store.entries.add({
         date: "2024-01-15",
         calories: 400,
         description: "   ",
         createdAt: 3000,
       });
 
-      const recent = await store.getRecentEntries();
+      const recent = await store.entries.getRecent();
       expect(recent).toHaveLength(1);
       expect(recent[0].description).toBe("Oatmeal");
     });
 
     it("should deduplicate by (description, calories) keeping most recent", async () => {
-      await store.addEntry({
+      await store.entries.add({
         date: "2024-01-15",
         calories: 300,
         description: "Oatmeal",
         createdAt: 1000,
       });
-      await store.addEntry({
+      await store.entries.add({
         date: "2024-01-16",
         calories: 300,
         description: "oatmeal",
         createdAt: 3000,
       });
-      await store.addEntry({
+      await store.entries.add({
         date: "2024-01-17",
         calories: 500,
         description: "Oatmeal",
         createdAt: 2000,
       });
 
-      const recent = await store.getRecentEntries();
+      const recent = await store.entries.getRecent();
       // "oatmeal" 300 cal at 3000 and "Oatmeal" 500 cal at 2000
       expect(recent).toHaveLength(2);
       expect(recent[0].createdAt).toBe(3000);
@@ -253,7 +253,7 @@ describe("IndexedDBStore", () => {
 
     it("should respect the 100-entry limit", async () => {
       for (let i = 0; i < 110; i++) {
-        await store.addEntry({
+        await store.entries.add({
           date: "2024-01-15",
           calories: i,
           description: `Item ${i}`,
@@ -261,19 +261,19 @@ describe("IndexedDBStore", () => {
         });
       }
 
-      const recent = await store.getRecentEntries();
+      const recent = await store.entries.getRecent();
       expect(recent).toHaveLength(100);
     });
 
     it("should return empty array when no entries exist", async () => {
-      const recent = await store.getRecentEntries();
+      const recent = await store.entries.getRecent();
       expect(recent).toHaveLength(0);
     });
   });
 
   describe("placeholders", () => {
     it("should add and retrieve a placeholder", async () => {
-      const placeholder = await store.addPlaceholder({
+      const placeholder = await store.placeholders.add({
         description: "Breakfast",
         calories: 400,
         timeOfDay: "08:00",
@@ -284,80 +284,80 @@ describe("IndexedDBStore", () => {
       expect(placeholder.calories).toBe(400);
       expect(placeholder.timeOfDay).toBe("08:00");
 
-      const all = await store.getPlaceholders();
+      const all = await store.placeholders.getAll();
       expect(all).toHaveLength(1);
       expect(all[0].id).toBe(placeholder.id);
     });
 
     it("should get placeholder by id", async () => {
-      const placeholder = await store.addPlaceholder({
+      const placeholder = await store.placeholders.add({
         description: "Lunch",
         calories: 600,
         timeOfDay: "12:00",
       });
 
-      const found = await store.getPlaceholderById(placeholder.id);
+      const found = await store.placeholders.getById(placeholder.id);
       expect(found).toBeDefined();
       expect(found!.description).toBe("Lunch");
     });
 
     it("should return undefined for non-existent placeholder id", async () => {
-      const found = await store.getPlaceholderById("non-existent");
+      const found = await store.placeholders.getById("non-existent");
       expect(found).toBeUndefined();
     });
 
     it("should update a placeholder", async () => {
-      const placeholder = await store.addPlaceholder({
+      const placeholder = await store.placeholders.add({
         description: "Lunch",
         calories: 600,
         timeOfDay: "12:00",
       });
 
-      await store.updatePlaceholder({
+      await store.placeholders.update({
         ...placeholder,
         calories: 700,
         description: "Big Lunch",
       });
 
-      const found = await store.getPlaceholderById(placeholder.id);
+      const found = await store.placeholders.getById(placeholder.id);
       expect(found!.calories).toBe(700);
       expect(found!.description).toBe("Big Lunch");
     });
 
     it("should delete a placeholder", async () => {
-      const placeholder = await store.addPlaceholder({
+      const placeholder = await store.placeholders.add({
         description: "Snack",
         calories: 200,
         timeOfDay: "15:00",
       });
 
-      await store.deletePlaceholder(placeholder.id);
+      await store.placeholders.delete(placeholder.id);
 
-      const all = await store.getPlaceholders();
+      const all = await store.placeholders.getAll();
       expect(all).toHaveLength(0);
     });
 
     it("should sort placeholders by sortOrder", async () => {
-      await store.addPlaceholder({
+      await store.placeholders.add({
         description: "Dinner",
         calories: 800,
         timeOfDay: "19:00",
         sortOrder: 2,
       });
-      await store.addPlaceholder({
+      await store.placeholders.add({
         description: "Breakfast",
         calories: 400,
         timeOfDay: "08:00",
         sortOrder: 0,
       });
-      await store.addPlaceholder({
+      await store.placeholders.add({
         description: "Lunch",
         calories: 600,
         timeOfDay: "12:00",
         sortOrder: 1,
       });
 
-      const all = await store.getPlaceholders();
+      const all = await store.placeholders.getAll();
       expect(all.map((p) => p.description)).toEqual([
         "Breakfast",
         "Lunch",
@@ -366,25 +366,25 @@ describe("IndexedDBStore", () => {
     });
 
     it("should reorder placeholders", async () => {
-      const p1 = await store.addPlaceholder({
+      const p1 = await store.placeholders.add({
         description: "Breakfast",
         calories: 400,
         timeOfDay: "08:00",
       });
-      const p2 = await store.addPlaceholder({
+      const p2 = await store.placeholders.add({
         description: "Lunch",
         calories: 600,
         timeOfDay: "12:00",
       });
-      const p3 = await store.addPlaceholder({
+      const p3 = await store.placeholders.add({
         description: "Dinner",
         calories: 800,
         timeOfDay: "19:00",
       });
 
-      await store.reorderPlaceholders([p3.id, p1.id, p2.id]);
+      await store.placeholders.reorder([p3.id, p1.id, p2.id]);
 
-      const all = await store.getPlaceholders();
+      const all = await store.placeholders.getAll();
       expect(all.map((p) => p.description)).toEqual([
         "Dinner",
         "Breakfast",
@@ -393,21 +393,21 @@ describe("IndexedDBStore", () => {
     });
 
     it("should return empty array when no placeholders exist", async () => {
-      const all = await store.getPlaceholders();
+      const all = await store.placeholders.getAll();
       expect(all).toHaveLength(0);
     });
   });
 
-  describe("getRecentEntries filtering", () => {
+  describe("getRecent filtering", () => {
     it("should exclude placeholder-generated entries from recent", async () => {
-      await store.addEntry({
+      await store.entries.add({
         date: "2024-01-15",
         calories: 300,
         description: "Oatmeal",
         createdAt: 1000,
         isFromPlaceholder: false,
       });
-      await store.addEntry({
+      await store.entries.add({
         date: "2024-01-15",
         calories: 400,
         description: "Breakfast Placeholder",
@@ -415,7 +415,7 @@ describe("IndexedDBStore", () => {
         isFromPlaceholder: true,
       });
 
-      const recent = await store.getRecentEntries();
+      const recent = await store.entries.getRecent();
       expect(recent).toHaveLength(1);
       expect(recent[0].description).toBe("Oatmeal");
     });

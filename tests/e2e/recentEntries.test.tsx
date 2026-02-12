@@ -20,13 +20,13 @@ describe("RecentEntries", () => {
   it("should show previously added entries with descriptions", async () => {
     const { store } = renderApp("/recent");
     const now = Date.now();
-    await store.addEntry({
+    await store.entries.add({
       date: "2024-01-15",
       calories: 300,
       description: "Oatmeal",
       createdAt: now,
     });
-    await store.addEntry({
+    await store.entries.add({
       date: "2024-01-15",
       calories: 500,
       description: "Chicken Salad",
@@ -43,7 +43,7 @@ describe("RecentEntries", () => {
   it("should re-add an entry from the recent list and navigate back", async () => {
     const { store } = renderApp();
     const now = Date.now();
-    await store.addEntry({
+    await store.entries.add({
       date: "2024-01-15",
       calories: 350,
       description: "Yogurt",
@@ -56,7 +56,7 @@ describe("RecentEntries", () => {
     await user.click(addBtn);
 
     // Should navigate back - we verify the entry was added
-    const todayEntries = await store.getEntriesByDate(
+    const todayEntries = await store.entries.getByDate(
       new Date().toISOString().split("T")[0],
     );
     const yogurtEntries = todayEntries.filter(
@@ -69,13 +69,13 @@ describe("RecentEntries", () => {
   it("should filter entries by search", async () => {
     const { store } = renderApp();
     const now = Date.now();
-    await store.addEntry({
+    await store.entries.add({
       date: "2024-01-15",
       calories: 300,
       description: "Oatmeal",
       createdAt: now,
     });
-    await store.addEntry({
+    await store.entries.add({
       date: "2024-01-15",
       calories: 500,
       description: "Chicken Salad",
@@ -97,13 +97,13 @@ describe("RecentEntries", () => {
   it("should not show entries without descriptions", async () => {
     const { store } = renderApp();
     const now = Date.now();
-    await store.addEntry({
+    await store.entries.add({
       date: "2024-01-15",
       calories: 300,
       description: "Oatmeal",
       createdAt: now,
     });
-    await store.addEntry({
+    await store.entries.add({
       date: "2024-01-15",
       calories: 500,
       description: "",

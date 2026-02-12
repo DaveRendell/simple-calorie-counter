@@ -1,12 +1,21 @@
 import type { IDBPDatabase } from "idb";
+import type { CrudStore } from "./DataStore";
 
-export class IndexedDBTable<T extends { id: string; sortOrder?: number }> {
+export class IndexedDBTable<
+  T extends { id: string; sortOrder?: number },
+> implements CrudStore<T> {
   #dbPromise: Promise<IDBPDatabase>;
   #storeName: string;
+  #sortFn?: (a: T, b: T) => number;
 
-  constructor(dbPromise: Promise<IDBPDatabase>, storeName: string) {
+  constructor(
+    dbPromise: Promise<IDBPDatabase>,
+    storeName: string,
+    sortFn?: (a: T, b: T) => number,
+  ) {
     this.#dbPromise = dbPromise;
     this.#storeName = storeName;
+    this.#sortFn = sortFn;
   }
 
   async getById(id: string): Promise<T | undefined> {
@@ -17,7 +26,8 @@ export class IndexedDBTable<T extends { id: string; sortOrder?: number }> {
   async getAll(sortFn?: (a: T, b: T) => number): Promise<T[]> {
     const db = await this.#dbPromise;
     const all = await db.getAll(this.#storeName);
-    return sortFn ? all.sort(sortFn) : all;
+    const fn = sortFn ?? this.#sortFn;
+    return fn ? all.sort(fn) : all;
   }
 
   async getAllFromIndex(
@@ -27,13 +37,17 @@ export class IndexedDBTable<T extends { id: string; sortOrder?: number }> {
   ): Promise<T[]> {
     const db = await this.#dbPromise;
     const all = await db.getAllFromIndex(this.#storeName, indexName, key);
-    return sortFn ? all.sort(sortFn) : all;
+    const fn = sortFn ?? this.#sortFn;
+    return fn ? all.sort(fn) : all;
   }
 
   async add(item: Omit<T, "id">): Promise<T> {
     const db = await this.#dbPromise;
     const id = crypto.randomUUID();
-    const full = { ...item, id } as T;
+    const sortOrder =
+      (item as { sortOrder?: number }).sortOrder ??
+      (await db.getAll(this.#storeName)).length;
+    const full = { ...item, id, sortOrder } as T;
     await db.add(this.#storeName, full);
     return full;
   }

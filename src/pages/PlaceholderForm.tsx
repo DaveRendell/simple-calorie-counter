@@ -34,7 +34,7 @@ export function PlaceholderForm() {
     if (!validate({ calories, description })) return;
 
     setSaving(true);
-    await store.addPlaceholder({
+    await store.placeholders.add({
       calories: parseInt(calories, 10),
       description: description.trim(),
       timeOfDay,

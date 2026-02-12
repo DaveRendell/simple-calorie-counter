@@ -1,19 +1,22 @@
 import type { FoodEntry, Placeholder, Settings } from "../types";
 
+export interface CrudStore<T extends { id: string }> {
+  getAll(): Promise<T[]>;
+  getById(id: string): Promise<T | undefined>;
+  add(item: Omit<T, "id">): Promise<T>;
+  update(item: T): Promise<T>;
+  delete(id: string): Promise<void>;
+  reorder(orderedIds: string[]): Promise<void>;
+}
+
+export interface FoodEntryStore extends CrudStore<FoodEntry> {
+  getByDate(date: string): Promise<FoodEntry[]>;
+  getRecent(): Promise<FoodEntry[]>;
+}
+
 export interface DataStore {
-  getEntriesByDate(date: string): Promise<FoodEntry[]>;
-  getEntryById(id: string): Promise<FoodEntry | undefined>;
-  addEntry(entry: Omit<FoodEntry, "id">): Promise<FoodEntry>;
-  updateEntry(entry: FoodEntry): Promise<FoodEntry>;
-  deleteEntry(id: string): Promise<void>;
+  entries: FoodEntryStore;
+  placeholders: CrudStore<Placeholder>;
   getSettings(): Promise<Settings>;
-  reorderEntries(date: string, orderedIds: string[]): Promise<void>;
-  getRecentEntries(): Promise<FoodEntry[]>;
   updateSettings(settings: Partial<Settings>): Promise<void>;
-  getPlaceholders(): Promise<Placeholder[]>;
-  getPlaceholderById(id: string): Promise<Placeholder | undefined>;
-  addPlaceholder(placeholder: Omit<Placeholder, "id">): Promise<Placeholder>;
-  updatePlaceholder(placeholder: Placeholder): Promise<Placeholder>;
-  deletePlaceholder(id: string): Promise<void>;
-  reorderPlaceholders(orderedIds: string[]): Promise<void>;
 }
