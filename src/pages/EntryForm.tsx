@@ -38,7 +38,7 @@ export function EntryForm() {
 
     setSaving(true);
     const now = Date.now();
-    await store.addEntry({
+    await store.entries.add({
       date,
       calories: parseInt(calories, 10),
       description: description.trim(),

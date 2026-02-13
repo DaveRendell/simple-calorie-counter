@@ -29,7 +29,7 @@ export function EditEntry() {
 
   useEffect(() => {
     async function loadEntry() {
-      const found = await store.getEntryById(id!);
+      const found = await store.entries.getById(id!);
       if (found) {
         setEntry(found);
         setCalories(String(found.calories));
@@ -44,7 +44,7 @@ export function EditEntry() {
     if (!validate({ calories })) return;
 
     setSaving(true);
-    await store.updateEntry({
+    await store.entries.update({
       ...entry,
       calories: parseInt(calories, 10),
       description: description.trim(),
@@ -59,7 +59,7 @@ export function EditEntry() {
       setConfirmDelete(true);
       return;
     }
-    await store.deleteEntry(entry.id);
+    await store.entries.delete(entry.id);
     navigate(-1);
   };
 

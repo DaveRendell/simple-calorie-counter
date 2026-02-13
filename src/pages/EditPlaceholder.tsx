@@ -31,7 +31,7 @@ export function EditPlaceholder() {
 
   useEffect(() => {
     async function loadPlaceholder() {
-      const found = await store.getPlaceholderById(id!);
+      const found = await store.placeholders.getById(id!);
       if (found) {
         setPlaceholder(found);
         setCalories(String(found.calories));
@@ -47,7 +47,7 @@ export function EditPlaceholder() {
     if (!validate({ calories, description })) return;
 
     setSaving(true);
-    await store.updatePlaceholder({
+    await store.placeholders.update({
       ...placeholder,
       calories: parseInt(calories, 10),
       description: description.trim(),
@@ -62,7 +62,7 @@ export function EditPlaceholder() {
       setConfirmDelete(true);
       return;
     }
-    await store.deletePlaceholder(placeholder.id);
+    await store.placeholders.delete(placeholder.id);
     navigate(-1);
   };
 

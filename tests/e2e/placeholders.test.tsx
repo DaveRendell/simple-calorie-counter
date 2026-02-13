@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { screen, waitFor } from "@testing-library/react";
+import { cleanup, screen, waitFor } from "@testing-library/react";
 import { renderApp } from "./helpers";
 import { toDateStr } from "../../src/dateFormat";
 
@@ -36,7 +36,7 @@ describe("Placeholders", () => {
   it("should edit a placeholder", async () => {
     const { store } = renderApp("/placeholders");
 
-    await store.addPlaceholder({
+    await store.placeholders.add({
       description: "Lunch",
       calories: 600,
       timeOfDay: "12:00",
@@ -58,12 +58,13 @@ describe("Placeholders", () => {
 
   it("should delete a placeholder with two-tap confirmation", async () => {
     const { store } = renderApp("/placeholders");
-    await store.addPlaceholder({
+    await store.placeholders.add({
       description: "Snack",
       calories: 200,
       timeOfDay: "15:00",
     });
 
+    cleanup();
     const { user } = renderApp("/placeholders");
     const card = await screen.findByText("Snack");
     await user.click(card);
@@ -94,12 +95,12 @@ describe("Placeholders", () => {
   it("should auto-populate entries from placeholders on empty today", async () => {
     // Set up placeholders before rendering DayView to avoid race conditions
     const { store } = renderApp("/settings");
-    await store.addPlaceholder({
+    await store.placeholders.add({
       description: "Breakfast",
       calories: 400,
       timeOfDay: "08:00",
     });
-    await store.addPlaceholder({
+    await store.placeholders.add({
       description: "Lunch",
       calories: 600,
       timeOfDay: "12:00",
@@ -120,12 +121,12 @@ describe("Placeholders", () => {
     const today = toDateStr(new Date());
     const now = Date.now();
 
-    await store.addPlaceholder({
+    await store.placeholders.add({
       description: "Breakfast",
       calories: 400,
       timeOfDay: "08:00",
     });
-    await store.addEntry({
+    await store.entries.add({
       date: today,
       calories: 300,
       description: "Oatmeal",
@@ -149,7 +150,7 @@ describe("Placeholders", () => {
     d.setHours(8, 0, 0, 0);
     const ts = d.getTime();
 
-    const entry = await store.addEntry({
+    const entry = await store.entries.add({
       date: today,
       calories: 400,
       description: "Breakfast",
@@ -166,7 +167,7 @@ describe("Placeholders", () => {
     await user.type(caloriesInput, "450");
     await user.click(screen.getByText("Save"));
 
-    const updated = await store.getEntryById(entry.id);
+    const updated = await store.entries.getById(entry.id);
     expect(updated!.calories).toBe(450);
     expect(updated!.isFromPlaceholder).toBe(false);
   });
@@ -176,13 +177,13 @@ describe("Placeholders", () => {
     const { store } = renderApp("/settings");
     const now = Date.now();
 
-    await store.addEntry({
+    await store.entries.add({
       date: "2024-01-15",
       calories: 300,
       description: "Oatmeal",
       createdAt: now,
     });
-    await store.addEntry({
+    await store.entries.add({
       date: "2024-01-15",
       calories: 400,
       description: "Breakfast Placeholder",

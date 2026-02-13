@@ -64,10 +64,10 @@ export function DayView() {
 
     (async () => {
       // Query the DB directly — React state may be stale after a date change
-      const currentEntries = await store.getEntriesByDate(date);
+      const currentEntries = await store.entries.getByDate(date);
       if (currentEntries.length > 0) return;
 
-      const placeholders = await store.getPlaceholders();
+      const placeholders = await store.placeholders.getAll();
       if (placeholders.length === 0) return;
 
       for (const p of placeholders) {
@@ -75,7 +75,7 @@ export function DayView() {
         const d = new Date();
         d.setHours(h, m, 0, 0);
         const ts = d.getTime();
-        await store.addEntry({
+        await store.entries.add({
           date,
           calories: p.calories,
           description: p.description,

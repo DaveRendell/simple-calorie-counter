@@ -9,7 +9,7 @@ export function usePlaceholders() {
 
   const refresh = useCallback(async () => {
     setLoading(true);
-    const result = await store.getPlaceholders();
+    const result = await store.placeholders.getAll();
     setPlaceholders(result);
     setLoading(false);
   }, [store]);
@@ -19,13 +19,13 @@ export function usePlaceholders() {
   }, [refresh]);
 
   const addPlaceholder = async (placeholder: Omit<Placeholder, "id">) => {
-    const newPlaceholder = await store.addPlaceholder(placeholder);
+    const newPlaceholder = await store.placeholders.add(placeholder);
     setPlaceholders((prev) => [...prev, newPlaceholder]);
     return newPlaceholder;
   };
 
   const updatePlaceholder = async (placeholder: Placeholder) => {
-    const updated = await store.updatePlaceholder(placeholder);
+    const updated = await store.placeholders.update(placeholder);
     setPlaceholders((prev) =>
       prev.map((p) => (p.id === updated.id ? updated : p)),
     );
@@ -33,12 +33,12 @@ export function usePlaceholders() {
   };
 
   const deletePlaceholder = async (id: string) => {
-    await store.deletePlaceholder(id);
+    await store.placeholders.delete(id);
     setPlaceholders((prev) => prev.filter((p) => p.id !== id));
   };
 
   const reorderPlaceholders = async (orderedIds: string[]) => {
-    await store.reorderPlaceholders(orderedIds);
+    await store.placeholders.reorder(orderedIds);
     setPlaceholders((prev) => {
       const map = new Map(prev.map((p) => [p.id, p]));
       return orderedIds

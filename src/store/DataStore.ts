@@ -1,19 +1,10 @@
-import type { FoodEntry, Placeholder, Settings } from "../types";
+import type { Placeholder, Settings } from "../types";
+import type { CrudStore } from "./CrudStore";
+import type { FoodEntryStore } from "./FoodEntryStore";
 
 export interface DataStore {
-  getEntriesByDate(date: string): Promise<FoodEntry[]>;
-  getEntryById(id: string): Promise<FoodEntry | undefined>;
-  addEntry(entry: Omit<FoodEntry, "id">): Promise<FoodEntry>;
-  updateEntry(entry: FoodEntry): Promise<FoodEntry>;
-  deleteEntry(id: string): Promise<void>;
+  entries: FoodEntryStore;
+  placeholders: CrudStore<Placeholder>;
   getSettings(): Promise<Settings>;
-  reorderEntries(date: string, orderedIds: string[]): Promise<void>;
-  getRecentEntries(): Promise<FoodEntry[]>;
   updateSettings(settings: Partial<Settings>): Promise<void>;
-  getPlaceholders(): Promise<Placeholder[]>;
-  getPlaceholderById(id: string): Promise<Placeholder | undefined>;
-  addPlaceholder(placeholder: Omit<Placeholder, "id">): Promise<Placeholder>;
-  updatePlaceholder(placeholder: Placeholder): Promise<Placeholder>;
-  deletePlaceholder(id: string): Promise<void>;
-  reorderPlaceholders(orderedIds: string[]): Promise<void>;
 }

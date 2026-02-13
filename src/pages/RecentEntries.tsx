@@ -18,7 +18,7 @@ export function RecentEntries() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    store.getRecentEntries().then((result) => {
+    store.entries.getRecent().then((result) => {
       setEntries(result);
       setLoading(false);
     });
@@ -32,7 +32,7 @@ export function RecentEntries() {
 
   const handleAdd = async (entry: FoodEntry) => {
     const now = Date.now();
-    await store.addEntry({
+    await store.entries.add({
       date,
       calories: entry.calories,
       description: entry.description,
