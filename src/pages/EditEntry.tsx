@@ -1,23 +1,22 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDataStore } from "../hooks/useDataStore";
+import { useEntry } from "../hooks/useEntry";
 import {
   useValidation,
   required,
   positiveNumber,
 } from "../hooks/useValidation";
-import type { FoodEntry } from "../types";
 import "./EditEntry.css";
 
 export function EditEntry() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const store = useDataStore();
-  const [entry, setEntry] = useState<FoodEntry | null>(null);
+  const { entry, updateEntry, deleteEntry } = useEntry(id);
   const [calories, setCalories] = useState("");
   const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
   const rules = useMemo(
     () => ({
@@ -27,24 +26,18 @@ export function EditEntry() {
   );
   const { errors, validate, clearError } = useValidation(rules);
 
-  useEffect(() => {
-    async function loadEntry() {
-      const found = await store.entries.getById(id!);
-      if (found) {
-        setEntry(found);
-        setCalories(String(found.calories));
-        setDescription(found.description);
-      }
-    }
-    loadEntry();
-  }, [id, store]);
+  if (entry && !initialized) {
+    setCalories(String(entry.calories));
+    setDescription(entry.description);
+    setInitialized(true);
+  }
 
   const handleSave = async () => {
     if (!entry) return;
     if (!validate({ calories })) return;
 
     setSaving(true);
-    await store.entries.update({
+    await updateEntry({
       ...entry,
       calories: parseInt(calories, 10),
       description: description.trim(),
@@ -59,7 +52,7 @@ export function EditEntry() {
       setConfirmDelete(true);
       return;
     }
-    await store.entries.delete(entry.id);
+    await deleteEntry();
     navigate(-1);
   };
 

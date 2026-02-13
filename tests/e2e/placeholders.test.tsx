@@ -56,6 +56,60 @@ describe("Placeholders", () => {
     expect(await screen.findByText("700 cal")).toBeInTheDocument();
   });
 
+  it("should edit a placeholder description and time of day", async () => {
+    const { store } = renderApp("/placeholders");
+
+    await store.placeholders.add({
+      description: "Dinner",
+      calories: 800,
+      timeOfDay: "18:00",
+    });
+
+    cleanup();
+    const { user } = renderApp("/placeholders");
+    const card = await screen.findByText("Dinner");
+    await user.click(card);
+
+    const descInput = await screen.findByLabelText("Description");
+    await vi.waitFor(() => expect(descInput).toHaveValue("Dinner"));
+
+    await user.clear(descInput);
+    await user.type(descInput, "Late Dinner");
+
+    const timeInput = screen.getByLabelText("Time of Day");
+    await user.clear(timeInput);
+    await user.type(timeInput, "20:00");
+
+    await user.click(screen.getByText("Save"));
+
+    expect(await screen.findByText("Late Dinner")).toBeInTheDocument();
+  });
+
+  it("should show validation error when clearing description on edit", async () => {
+    const { store } = renderApp("/placeholders");
+
+    await store.placeholders.add({
+      description: "Snack",
+      calories: 200,
+      timeOfDay: "15:00",
+    });
+
+    cleanup();
+    const { user } = renderApp("/placeholders");
+    const card = await screen.findByText("Snack");
+    await user.click(card);
+
+    const descInput = await screen.findByLabelText("Description");
+    await vi.waitFor(() => expect(descInput).toHaveValue("Snack"));
+
+    await user.clear(descInput);
+    await user.click(screen.getByText("Save"));
+
+    expect(
+      await screen.findByText("Description is required"),
+    ).toBeInTheDocument();
+  });
+
   it("should delete a placeholder with two-tap confirmation", async () => {
     const { store } = renderApp("/placeholders");
     await store.placeholders.add({

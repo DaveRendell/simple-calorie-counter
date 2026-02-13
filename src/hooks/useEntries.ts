@@ -21,23 +21,6 @@ export function useEntries(date: string) {
     setLoading(false);
   }, [store, date]);
 
-  const addEntry = async (entry: Omit<FoodEntry, "id">) => {
-    const newEntry = await store.entries.add(entry);
-    setEntries((prev) => [...prev, newEntry]);
-    return newEntry;
-  };
-
-  const updateEntry = async (entry: FoodEntry) => {
-    const updated = await store.entries.update(entry);
-    setEntries((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
-    return updated;
-  };
-
-  const deleteEntry = async (id: string) => {
-    await store.entries.delete(id);
-    setEntries((prev) => prev.filter((e) => e.id !== id));
-  };
-
   const reorderEntries = async (orderedIds: string[]) => {
     await store.entries.reorder(orderedIds);
     setEntries((prev) => {
@@ -54,9 +37,6 @@ export function useEntries(date: string) {
     entries,
     loading,
     totalCalories,
-    addEntry,
-    updateEntry,
-    deleteEntry,
     reorderEntries,
     refresh,
   };

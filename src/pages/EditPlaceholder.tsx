@@ -1,24 +1,24 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDataStore } from "../hooks/useDataStore";
+import { usePlaceholder } from "../hooks/usePlaceholder";
 import {
   useValidation,
   required,
   positiveNumber,
 } from "../hooks/useValidation";
-import type { Placeholder } from "../types";
 import "./EditEntry.css";
 
 export function EditPlaceholder() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const store = useDataStore();
-  const [placeholder, setPlaceholder] = useState<Placeholder | null>(null);
+  const { placeholder, updatePlaceholder, deletePlaceholder } =
+    usePlaceholder(id);
   const [calories, setCalories] = useState("");
   const [description, setDescription] = useState("");
   const [timeOfDay, setTimeOfDay] = useState("12:00");
   const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
   const rules = useMemo(
     () => ({
@@ -29,25 +29,19 @@ export function EditPlaceholder() {
   );
   const { errors, validate, clearError } = useValidation(rules);
 
-  useEffect(() => {
-    async function loadPlaceholder() {
-      const found = await store.placeholders.getById(id!);
-      if (found) {
-        setPlaceholder(found);
-        setCalories(String(found.calories));
-        setDescription(found.description);
-        setTimeOfDay(found.timeOfDay);
-      }
-    }
-    loadPlaceholder();
-  }, [id, store]);
+  if (placeholder && !initialized) {
+    setCalories(String(placeholder.calories));
+    setDescription(placeholder.description);
+    setTimeOfDay(placeholder.timeOfDay);
+    setInitialized(true);
+  }
 
   const handleSave = async () => {
     if (!placeholder) return;
     if (!validate({ calories, description })) return;
 
     setSaving(true);
-    await store.placeholders.update({
+    await updatePlaceholder({
       ...placeholder,
       calories: parseInt(calories, 10),
       description: description.trim(),
@@ -62,7 +56,7 @@ export function EditPlaceholder() {
       setConfirmDelete(true);
       return;
     }
-    await store.placeholders.delete(placeholder.id);
+    await deletePlaceholder();
     navigate(-1);
   };
 

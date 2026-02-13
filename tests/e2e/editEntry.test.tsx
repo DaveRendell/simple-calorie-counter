@@ -63,6 +63,30 @@ describe("EditEntry", () => {
     expect(await screen.findByText("No entries yet")).toBeInTheDocument();
   });
 
+  it("should edit the description of an entry", async () => {
+    const { user, store } = renderApp();
+    const today = toDateStr(new Date());
+
+    await store.entries.add({
+      date: today,
+      calories: 300,
+      description: "Oatmeal",
+      createdAt: Date.now(),
+    });
+
+    await user.click(screen.getByLabelText("Previous day"));
+    await user.click(screen.getByLabelText("Next day"));
+
+    await user.click(await screen.findByText("Oatmeal"));
+
+    const descInput = await screen.findByLabelText("Description (optional)");
+    await user.clear(descInput);
+    await user.type(descInput, "Porridge");
+    await user.click(screen.getByText("Save"));
+
+    expect(await screen.findByText("Porridge")).toBeInTheDocument();
+  });
+
   it("should show validation error when clearing calories and saving", async () => {
     const { user, store } = renderApp();
     const today = toDateStr(new Date());

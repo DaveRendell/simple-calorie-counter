@@ -5,7 +5,9 @@
       "Bash(bun add:*)",
       "Bash(bun run build:*)",
       "Bash(bun run test:*)",
-      "Bash(bun run format:*)"
+      "Bash(bun run format:*)",
+      "Bash(bun run lint:*)",
+      "Bash(bun run test:coverage:*)"
     ]
   }
 }
