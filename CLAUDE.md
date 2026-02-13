@@ -10,6 +10,7 @@ PWA for tracking daily calorie intake. React 18 + TypeScript, Vite, IndexedDB vi
 - `bun run test:watch` - Run tests in watch mode
 - `bun run lint` - ESLint
 - `bun run format` - Prettier
+- `bun run check` - Local CI: build, lint, format check, and tests with coverage thresholds. **Run this after adding new features.**
 
 ## Architecture
 

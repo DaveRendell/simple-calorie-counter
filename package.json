@@ -11,7 +11,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "bun run build && bun run lint && bun run format:check && bun run test:coverage"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
