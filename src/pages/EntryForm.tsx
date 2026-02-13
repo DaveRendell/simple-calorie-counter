@@ -15,12 +15,17 @@ export function EntryForm() {
   const store = useDataStore();
   const caloriesRef = useRef<HTMLInputElement>(null);
   const [calories, setCalories] = useState("");
+  const [multiplier, setMultiplier] = useState("1.0");
   const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
 
   const rules = useMemo(
     () => ({
       calories: [required("Calories"), positiveNumber("Calories")],
+      multiplier: [
+        required("Serving multiplier"),
+        positiveNumber("Serving multiplier"),
+      ],
     }),
     [],
   );
@@ -34,13 +39,13 @@ export function EntryForm() {
   }, []);
 
   const handleSave = async () => {
-    if (!validate({ calories })) return;
+    if (!validate({ calories, multiplier })) return;
 
     setSaving(true);
     const now = Date.now();
     await store.entries.add({
       date,
-      calories: parseInt(calories, 10),
+      calories: Math.round(parseInt(calories, 10) * parseFloat(multiplier)),
       description: description.trim(),
       createdAt: now,
       sortOrder: now,
@@ -70,6 +75,29 @@ export function EntryForm() {
         {errors.calories && (
           <span id="calories-error" className="field-error" role="alert">
             {errors.calories}
+          </span>
+        )}
+      </div>
+      <div className="form-field">
+        <label htmlFor="multiplier">Serving multiplier</label>
+        <input
+          id="multiplier"
+          type="number"
+          inputMode="numeric"
+          placeholder="1.0"
+          step="0.1"
+          value={multiplier}
+          onChange={(e) => {
+            setMultiplier(e.target.value);
+            clearError("multiplier");
+          }}
+          onKeyDown={(e) => e.key === "Enter" && handleSave()}
+          aria-invalid={!!errors.multiplier}
+          aria-describedby={errors.multiplier ? "multiplier-error" : undefined}
+        />
+        {errors.multiplier && (
+          <span id="multiplier-error" className="field-error" role="alert">
+            {errors.multiplier}
           </span>
         )}
       </div>

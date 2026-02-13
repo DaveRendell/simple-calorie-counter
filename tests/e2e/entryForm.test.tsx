@@ -17,12 +17,16 @@ describe("EntryForm", () => {
     await user.type(caloriesInput, "350");
 
     const descInput = screen.getByLabelText("Description (optional)");
-    await user.type(descInput, "Chicken salad");
+    await user.type(descInput, "Veggie salad");
+
+    const multiplierInput = screen.getByLabelText("Serving multiplier");
+    await user.clear(multiplierInput);
+    await user.type(multiplierInput, "2");
 
     await user.click(screen.getByText("Save"));
 
-    expect(await screen.findByText("350 cal")).toBeInTheDocument();
-    expect(screen.getByText("Chicken salad")).toBeInTheDocument();
+    expect(await screen.findByText("700 cal")).toBeInTheDocument();
+    expect(screen.getByText("Veggie salad")).toBeInTheDocument();
   });
 
   it("should show validation error when saving with empty calories", async () => {
@@ -57,6 +61,50 @@ describe("EntryForm", () => {
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "Calories must be a positive number",
+    );
+  });
+
+  it("should show validation error for missing multiplier", async () => {
+    const { user } = renderApp();
+
+    await user.click(await screen.findByText("Log Calories"));
+    await user.type(screen.getByLabelText("Calories"), "1");
+    const multiplierInput = screen.getByLabelText("Serving multiplier");
+    await user.clear(multiplierInput);
+    await user.click(screen.getByText("Save"));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Serving multiplier is required",
+    );
+  });
+
+  it("should show validation error for negative serving multiplier", async () => {
+    const { user } = renderApp();
+
+    await user.click(await screen.findByText("Log Calories"));
+    await user.type(screen.getByLabelText("Calories"), "1");
+    const multiplierInput = screen.getByLabelText("Serving multiplier");
+    await user.clear(multiplierInput);
+    await user.type(multiplierInput, "-1.0");
+    await user.click(screen.getByText("Save"));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Serving multiplier must be a positive number",
+    );
+  });
+
+  it("should show validation error for zero serving multiplier", async () => {
+    const { user } = renderApp();
+
+    await user.click(await screen.findByText("Log Calories"));
+    await user.type(screen.getByLabelText("Calories"), "1");
+    const multiplierInput = screen.getByLabelText("Serving multiplier");
+    await user.clear(multiplierInput);
+    await user.type(multiplierInput, "0");
+    await user.click(screen.getByText("Save"));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Serving multiplier must be a positive number",
     );
   });
 
