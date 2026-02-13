@@ -1,5 +1,5 @@
 import type { IDBPDatabase } from "idb";
-import type { CrudStore } from "./DataStore";
+import type { CrudStore } from "./CrudStore";
 
 export class IndexedDBTable<
   T extends { id: string; sortOrder?: number },

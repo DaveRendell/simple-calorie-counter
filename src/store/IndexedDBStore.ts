@@ -6,6 +6,7 @@ import { IndexedDBFoodEntryStore } from "./IndexedDBFoodEntryStore";
 
 const DB_NAME = "calorie-counter";
 const DB_VERSION = 2;
+const ENTRIES_STORE = "entries";
 const SETTINGS_STORE = "settings";
 const PLACEHOLDERS_STORE = "placeholders";
 const SETTINGS_KEY = "user-settings";
@@ -18,7 +19,7 @@ function initDB(): Promise<IDBPDatabase> {
   return openDB(DB_NAME, DB_VERSION, {
     upgrade(db, oldVersion) {
       if (oldVersion < 1) {
-        const entryStore = db.createObjectStore("entries", {
+        const entryStore = db.createObjectStore(ENTRIES_STORE, {
           keyPath: "id",
         });
         entryStore.createIndex("date", "date", { unique: false });
@@ -44,7 +45,7 @@ export class IndexedDBStore implements DataStore {
 
   constructor() {
     this.dbPromise = initDB();
-    this.entries = new IndexedDBFoodEntryStore(this.dbPromise);
+    this.entries = new IndexedDBFoodEntryStore(this.dbPromise, ENTRIES_STORE);
     this.placeholders = new IndexedDBTable<Placeholder>(
       this.dbPromise,
       PLACEHOLDERS_STORE,

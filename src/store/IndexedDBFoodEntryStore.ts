@@ -1,9 +1,7 @@
 import type { IDBPDatabase } from "idb";
 import type { FoodEntry } from "../types";
-import type { FoodEntryStore } from "./DataStore";
+import type { FoodEntryStore } from "./FoodEntryStore";
 import { IndexedDBTable } from "./IndexedDBTable";
-
-const ENTRIES_STORE = "entries";
 
 const entrySortFn = (a: FoodEntry, b: FoodEntry) =>
   (a.sortOrder ?? a.createdAt) - (b.sortOrder ?? b.createdAt);
@@ -12,15 +10,8 @@ export class IndexedDBFoodEntryStore
   extends IndexedDBTable<FoodEntry>
   implements FoodEntryStore
 {
-  constructor(dbPromise: Promise<IDBPDatabase>) {
-    super(dbPromise, ENTRIES_STORE, entrySortFn);
-  }
-
-  override async add(item: Omit<FoodEntry, "id">): Promise<FoodEntry> {
-    return super.add({
-      ...item,
-      sortOrder: item.sortOrder ?? item.createdAt,
-    });
+  constructor(dbPromise: Promise<IDBPDatabase>, storeName: string) {
+    super(dbPromise, storeName, entrySortFn);
   }
 
   async getByDate(date: string): Promise<FoodEntry[]> {
