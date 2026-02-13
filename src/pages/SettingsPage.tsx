@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSettings } from "../hooks/useSettings";
 import "./SettingsPage.css";
@@ -6,21 +6,16 @@ import "./SettingsPage.css";
 export function SettingsPage() {
   const { settings, loading, updateSettings } = useSettings();
   const navigate = useNavigate();
-  const [target, setTarget] = useState("");
+  const [editedTarget, setEditedTarget] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!loading) {
-      setTarget(String(settings.dailyCalorieTarget));
-    }
-  }, [loading, settings.dailyCalorieTarget]);
+  const target = editedTarget ?? String(settings.dailyCalorieTarget);
 
   const handleBlur = () => {
     const val = parseInt(target, 10);
     if (val && val > 0) {
       updateSettings({ dailyCalorieTarget: val });
-    } else {
-      setTarget(String(settings.dailyCalorieTarget));
     }
+    setEditedTarget(null);
   };
 
   if (loading) return null;
@@ -34,7 +29,7 @@ export function SettingsPage() {
           type="number"
           inputMode="numeric"
           value={target}
-          onChange={(e) => setTarget(e.target.value)}
+          onChange={(e) => setEditedTarget(e.target.value)}
           onBlur={handleBlur}
           onKeyDown={(e) => {
             if (e.key === "Enter") {

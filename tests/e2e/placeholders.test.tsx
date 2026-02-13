@@ -5,7 +5,7 @@ import { toDateStr } from "../../src/dateFormat";
 
 describe("Placeholders", () => {
   beforeEach(() => {
-    indexedDB = new IDBFactory();
+    globalThis.indexedDB = new IDBFactory();
   });
 
   it("should navigate to placeholder list from settings", async () => {

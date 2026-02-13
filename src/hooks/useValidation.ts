@@ -28,8 +28,9 @@ export function useValidation(rules: ValidationRules) {
   const clearError = useCallback((field: string) => {
     setErrors((prev) => {
       if (!prev[field]) return prev;
-      const { [field]: _, ...rest } = prev;
-      return rest;
+      const next = { ...prev };
+      delete next[field];
+      return next;
     });
   }, []);
 

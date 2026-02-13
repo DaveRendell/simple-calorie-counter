@@ -4,7 +4,7 @@ import { renderApp } from "./helpers";
 
 describe("RecentEntries", () => {
   beforeEach(() => {
-    indexedDB = new IDBFactory();
+    globalThis.indexedDB = new IDBFactory();
   });
 
   it("should navigate to recent entries page from DayView", async () => {
@@ -34,7 +34,7 @@ describe("RecentEntries", () => {
     });
 
     // Re-render to pick up the entries
-    const { user: user2 } = renderApp("/recent");
+    renderApp("/recent");
 
     expect(await screen.findByText("Oatmeal")).toBeInTheDocument();
     expect(screen.getByText("Chicken Salad")).toBeInTheDocument();

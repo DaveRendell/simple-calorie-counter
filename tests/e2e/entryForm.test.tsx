@@ -4,7 +4,7 @@ import { renderApp } from "./helpers";
 
 describe("EntryForm", () => {
   beforeEach(() => {
-    indexedDB = new IDBFactory();
+    globalThis.indexedDB = new IDBFactory();
   });
 
   it("should add an entry and see it on the day view", async () => {

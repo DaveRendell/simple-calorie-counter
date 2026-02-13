@@ -4,7 +4,7 @@ import { renderApp } from "./helpers";
 
 describe("Settings", () => {
   beforeEach(() => {
-    indexedDB = new IDBFactory();
+    globalThis.indexedDB = new IDBFactory();
   });
 
   it("should update calorie target in settings", async () => {

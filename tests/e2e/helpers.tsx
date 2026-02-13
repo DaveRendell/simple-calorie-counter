@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
-import { DataStoreProvider } from "../../src/hooks/useDataStore";
+import { DataStoreProvider } from "../../src/hooks/DataStoreProvider";
 import { IndexedDBStore } from "../../src/store/IndexedDBStore";
 import { Header } from "../../src/components/Header";
 import { DayView } from "../../src/pages/DayView";

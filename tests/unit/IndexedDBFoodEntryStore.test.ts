@@ -16,7 +16,7 @@ describe("IndexedDBFoodEntryStore", () => {
   let store: IndexedDBFoodEntryStore;
 
   beforeEach(() => {
-    indexedDB = new IDBFactory();
+    globalThis.indexedDB = new IDBFactory();
     store = new IndexedDBFoodEntryStore(createTestDB(), "entries");
   });
 

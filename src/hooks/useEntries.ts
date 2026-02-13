@@ -7,16 +7,19 @@ export function useEntries(date: string) {
   const [entries, setEntries] = useState<FoodEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    store.entries.getByDate(date).then((result) => {
+      setEntries(result);
+      setLoading(false);
+    });
+  }, [store, date]);
+
   const refresh = useCallback(async () => {
     setLoading(true);
     const result = await store.entries.getByDate(date);
     setEntries(result);
     setLoading(false);
   }, [store, date]);
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
 
   const addEntry = async (entry: Omit<FoodEntry, "id">) => {
     const newEntry = await store.entries.add(entry);

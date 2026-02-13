@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { DataStoreProvider } from "./hooks/useDataStore";
+import { DataStoreProvider } from "./hooks/DataStoreProvider";
 import { IndexedDBStore } from "./store";
 import { Header } from "./components/Header";
 import { DayView } from "./pages/DayView";

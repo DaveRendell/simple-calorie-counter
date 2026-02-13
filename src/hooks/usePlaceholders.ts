@@ -7,16 +7,19 @@ export function usePlaceholders() {
   const [placeholders, setPlaceholders] = useState<Placeholder[]>([]);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    store.placeholders.getAll().then((result) => {
+      setPlaceholders(result);
+      setLoading(false);
+    });
+  }, [store]);
+
   const refresh = useCallback(async () => {
     setLoading(true);
     const result = await store.placeholders.getAll();
     setPlaceholders(result);
     setLoading(false);
   }, [store]);
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
 
   const addPlaceholder = async (placeholder: Omit<Placeholder, "id">) => {
     const newPlaceholder = await store.placeholders.add(placeholder);

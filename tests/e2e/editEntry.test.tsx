@@ -5,7 +5,7 @@ import { renderApp } from "./helpers";
 
 describe("EditEntry", () => {
   beforeEach(() => {
-    indexedDB = new IDBFactory();
+    globalThis.indexedDB = new IDBFactory();
   });
 
   it("should edit an entry", async () => {

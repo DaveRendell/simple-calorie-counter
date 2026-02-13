@@ -30,8 +30,7 @@ export function RecentEntries() {
       )
     : entries;
 
-  const handleAdd = async (entry: FoodEntry) => {
-    const now = Date.now();
+  const handleAdd = async (entry: FoodEntry, now: number) => {
     await store.entries.add({
       date,
       calories: entry.calories,
@@ -65,7 +64,7 @@ export function RecentEntries() {
               </div>
               <button
                 className="recent-add-btn"
-                onClick={() => handleAdd(entry)}
+                onClick={() => handleAdd(entry, Date.now())}
                 aria-label={`Add ${entry.description}`}
               >
                 {ADD}

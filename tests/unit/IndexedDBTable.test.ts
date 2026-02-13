@@ -21,7 +21,7 @@ describe("IndexedDBTable", () => {
   let table: IndexedDBTable<TestItem>;
 
   beforeEach(() => {
-    indexedDB = new IDBFactory();
+    globalThis.indexedDB = new IDBFactory();
     table = new IndexedDBTable<TestItem>(createTestDB(), "items");
   });
 

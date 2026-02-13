@@ -4,7 +4,7 @@ import { renderApp } from "./helpers";
 
 describe("DayView", () => {
   beforeEach(() => {
-    indexedDB = new IDBFactory();
+    globalThis.indexedDB = new IDBFactory();
   });
 
   it("should show empty state on day view", async () => {

@@ -6,7 +6,7 @@ describe("IndexedDBStore", () => {
   let store: IndexedDBStore;
 
   beforeEach(() => {
-    indexedDB = new IDBFactory();
+    globalThis.indexedDB = new IDBFactory();
     store = new IndexedDBStore();
   });
 
