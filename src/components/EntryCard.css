@@ -5,6 +5,7 @@
   width: 100%;
   background: var(--color-surface);
   border-radius: var(--radius);
+  border-left: 3px solid transparent;
   transition: background-color 0.15s;
 }
 
