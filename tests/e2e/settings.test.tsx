@@ -24,4 +24,30 @@ describe("Settings", () => {
 
     expect(await screen.findByText(/\/ 1500 cal/)).toBeInTheDocument();
   });
+
+  it("should show theme toggle with System selected by default", async () => {
+    renderApp("/settings");
+
+    const systemBtn = await screen.findByRole("radio", { name: "System" });
+    expect(systemBtn).toHaveAttribute("aria-checked", "true");
+
+    const lightBtn = screen.getByRole("radio", { name: "Light" });
+    expect(lightBtn).toHaveAttribute("aria-checked", "false");
+
+    const darkBtn = screen.getByRole("radio", { name: "Dark" });
+    expect(darkBtn).toHaveAttribute("aria-checked", "false");
+  });
+
+  it("should switch theme when clicking a toggle option", async () => {
+    const { user } = renderApp("/settings");
+
+    const darkBtn = await screen.findByRole("radio", { name: "Dark" });
+    await user.click(darkBtn);
+
+    expect(darkBtn).toHaveAttribute("aria-checked", "true");
+    expect(screen.getByRole("radio", { name: "System" })).toHaveAttribute(
+      "aria-checked",
+      "false",
+    );
+  });
 });

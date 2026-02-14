@@ -68,7 +68,7 @@
 }
 
 .recent-add-btn:hover {
-  background: #3a8edc;
+  background: var(--color-primary-hover);
 }
 
 .recent-empty {

@@ -2,6 +2,7 @@ import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { DataStoreProvider } from "../../src/hooks/DataStoreProvider";
+import { SettingsProvider } from "../../src/hooks/SettingsProvider";
 import { IndexedDBStore } from "../../src/store/IndexedDBStore";
 import { Header } from "../../src/components/Header";
 import { DayView } from "../../src/pages/DayView";
@@ -22,22 +23,24 @@ export function renderApp(initialRoute = "/") {
     user: userEvent.setup(),
     ...render(
       <DataStoreProvider store={store}>
-        <MemoryRouter initialEntries={[initialRoute]}>
-          <Header />
-          <Routes>
-            <Route path="/" element={<DayView />} />
-            <Route path="/add" element={<EntryForm />} />
-            <Route path="/edit/:id" element={<EditEntry />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/recent" element={<RecentEntries />} />
-            <Route path="/placeholders" element={<PlaceholderList />} />
-            <Route path="/placeholders/add" element={<PlaceholderForm />} />
-            <Route
-              path="/placeholders/edit/:id"
-              element={<EditPlaceholder />}
-            />
-          </Routes>
-        </MemoryRouter>
+        <SettingsProvider>
+          <MemoryRouter initialEntries={[initialRoute]}>
+            <Header />
+            <Routes>
+              <Route path="/" element={<DayView />} />
+              <Route path="/add" element={<EntryForm />} />
+              <Route path="/edit/:id" element={<EditEntry />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/recent" element={<RecentEntries />} />
+              <Route path="/placeholders" element={<PlaceholderList />} />
+              <Route path="/placeholders/add" element={<PlaceholderForm />} />
+              <Route
+                path="/placeholders/edit/:id"
+                element={<EditPlaceholder />}
+              />
+            </Routes>
+          </MemoryRouter>
+        </SettingsProvider>
       </DataStoreProvider>,
     ),
   };

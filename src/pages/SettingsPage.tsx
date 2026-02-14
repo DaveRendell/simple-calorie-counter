@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSettings } from "../hooks/useSettings";
+import type { ThemeMode } from "../types";
 import "./SettingsPage.css";
+
+const THEME_OPTIONS: { value: ThemeMode; label: string }[] = [
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
+  { value: "system", label: "System" },
+];
 
 export function SettingsPage() {
   const { settings, loading, updateSettings } = useSettings();
@@ -37,6 +44,22 @@ export function SettingsPage() {
             }
           }}
         />
+      </div>
+      <div className="form-field">
+        <label>Theme</label>
+        <div className="theme-toggle" role="radiogroup" aria-label="Theme">
+          {THEME_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              role="radio"
+              aria-checked={settings.theme === opt.value}
+              className={`theme-toggle-btn${settings.theme === opt.value ? " theme-toggle-btn--active" : ""}`}
+              onClick={() => updateSettings({ theme: opt.value })}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
       </div>
       <button
         className="settings-link-button"

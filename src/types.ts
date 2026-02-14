@@ -16,6 +16,9 @@ export interface Placeholder {
   sortOrder?: number;
 }
 
+export type ThemeMode = "light" | "dark" | "system";
+
 export interface Settings {
   dailyCalorieTarget: number;
+  theme: ThemeMode;
 }

@@ -1,6 +1,7 @@
 :root {
   --color-primary: #4a9eed;
   --color-primary-light: #e8f2fc;
+  --color-primary-hover: #3a8edc;
   --color-bg: #ffffff;
   --color-surface: #f8f9fa;
   --color-text: #1a1a1a;
@@ -9,6 +10,29 @@
   --color-danger: #ef4444;
   --color-danger-hover: #dc2626;
   --radius: 8px;
+}
+
+[data-theme="dark"] {
+  --color-primary: #5ba8f5;
+  --color-primary-light: #1e3a5f;
+  --color-primary-hover: #4b9ae8;
+  --color-bg: #121212;
+  --color-surface: #1e1e1e;
+  --color-text: #e4e4e7;
+  --color-text-secondary: #9ca3af;
+  --color-border: #2e2e2e;
+  --color-danger: #f87171;
+  --color-danger-hover: #ef4444;
+  color-scheme: dark;
+}
+
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition:
+    background-color 0.3s,
+    color 0.3s,
+    border-color 0.3s;
 }
 
 *,
@@ -49,6 +73,8 @@ input[type="time"] {
   width: 100%;
   outline: none;
   transition: border-color 0.15s;
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 input:focus {

@@ -13,6 +13,7 @@ const SETTINGS_KEY = "user-settings";
 
 const DEFAULT_SETTINGS: Settings = {
   dailyCalorieTarget: 2000,
+  theme: "system",
 };
 
 function initDB(): Promise<IDBPDatabase> {

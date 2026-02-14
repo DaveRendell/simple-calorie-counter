@@ -25,7 +25,7 @@
 }
 
 .save-button:hover:not(:disabled) {
-  background: #3a8edc;
+  background: var(--color-primary-hover);
 }
 
 .save-button:disabled {
