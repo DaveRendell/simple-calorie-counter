@@ -75,6 +75,9 @@ body {
 
 .page-transition {
   animation: page-enter 150ms ease-out;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 input[type="number"],
