@@ -1,11 +1,13 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import "./Header.css";
 import { LEFT, SETTINGS } from "../icons";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 export function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const isHome = location.pathname === "/";
+  const title = usePageTitle();
 
   return (
     <header className="header">
@@ -20,7 +22,7 @@ export function Header() {
       ) : (
         <div className="header-spacer" />
       )}
-      <h1 className="header-title">Calories</h1>
+      <h1 className="header-title">{title}</h1>
       {isHome ? (
         <button
           className="header-settings"

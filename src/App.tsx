@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { DataStoreProvider } from "./hooks/DataStoreProvider";
 import { SettingsProvider } from "./hooks/SettingsProvider";
 import { IndexedDBStore } from "./store";
@@ -15,10 +15,10 @@ import { EditPlaceholder } from "./pages/EditPlaceholder";
 
 const store = new IndexedDBStore();
 
-function AppContent() {
-  useTheme();
+function AppRoutes() {
+  const { pathname } = useLocation();
   return (
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
+    <div key={pathname} className="page-transition">
       <Header />
       <Routes>
         <Route path="/" element={<DayView />} />
@@ -30,6 +30,15 @@ function AppContent() {
         <Route path="/placeholders/add" element={<PlaceholderForm />} />
         <Route path="/placeholders/edit/:id" element={<EditPlaceholder />} />
       </Routes>
+    </div>
+  );
+}
+
+function AppContent() {
+  useTheme();
+  return (
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <AppRoutes />
     </BrowserRouter>
   );
 }
