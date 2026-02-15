@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   DndContext,
@@ -20,6 +20,7 @@ import { useDataStore } from "../hooks/useDataStore";
 import { EntryCard } from "../components/EntryCard";
 import { ProgressBar } from "../components/ProgressBar";
 import { toDateStr } from "../dateFormat";
+import { useSwipe } from "../hooks/useSwipe";
 import "./DayView.css";
 import { ADD, HISTORY, LEFT, RIGHT } from "../icons";
 
@@ -56,6 +57,16 @@ export function DayView() {
   const navigate = useNavigate();
   const isToday = date === getToday();
   const populatedRef = useRef(false);
+  const [slideDirection, setSlideDirection] = useState<"left" | "right" | null>(
+    null,
+  );
+
+  const handleSwipe = useCallback((direction: "left" | "right") => {
+    setSlideDirection(direction);
+    setDate((d) => addDays(d, direction === "left" ? 1 : -1));
+  }, []);
+
+  const swipeRef = useSwipe<HTMLDivElement>({ onSwipe: handleSwipe });
 
   useEffect(() => {
     populatedRef.current = false;
@@ -110,12 +121,21 @@ export function DayView() {
     reorderEntries(newOrder.map((e) => e.id));
   };
 
+  const slideClass = slideDirection
+    ? slideDirection === "right"
+      ? "slide-from-left"
+      : "slide-from-right"
+    : "";
+
   return (
-    <div className="day-view">
+    <div className="day-view" ref={swipeRef}>
       <div className="date-nav">
         <button
           className="date-arrow"
-          onClick={() => setDate((d) => addDays(d, -1))}
+          onClick={() => {
+            setSlideDirection("right");
+            setDate((d) => addDays(d, -1));
+          }}
           aria-label="Previous day"
         >
           {LEFT}
@@ -125,43 +145,50 @@ export function DayView() {
         </span>
         <button
           className="date-arrow"
-          onClick={() => setDate((d) => addDays(d, 1))}
+          onClick={() => {
+            setSlideDirection("left");
+            setDate((d) => addDays(d, 1));
+          }}
           aria-label="Next day"
         >
           {RIGHT}
         </button>
       </div>
 
-      <ProgressBar
-        current={totalCalories}
-        target={settings.dailyCalorieTarget}
-      />
+      <div key={date} className={`day-content ${slideClass}`}>
+        <ProgressBar
+          current={totalCalories}
+          target={settings.dailyCalorieTarget}
+        />
 
-      <div className="entries-list">
-        {loading ? (
-          <p className="entries-empty">Loading...</p>
-        ) : entries.length === 0 ? (
-          <p className="entries-empty">No entries yet</p>
-        ) : (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={entries.map((e) => e.id)}
-              strategy={verticalListSortingStrategy}
+        <div className="entries-list">
+          {loading ? (
+            <p className="entries-empty">Loading...</p>
+          ) : entries.length === 0 ? (
+            <p className="entries-empty">No entries yet</p>
+          ) : (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
             >
-              {entries.map((entry) => (
-                <EntryCard
-                  key={entry.id}
-                  entry={entry}
-                  variant={entry.isFromPlaceholder ? "placeholder" : "default"}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
-        )}
+              <SortableContext
+                items={entries.map((e) => e.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {entries.map((entry) => (
+                  <EntryCard
+                    key={entry.id}
+                    entry={entry}
+                    variant={
+                      entry.isFromPlaceholder ? "placeholder" : "default"
+                    }
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
+          )}
+        </div>
       </div>
 
       <div className="add-button-container">

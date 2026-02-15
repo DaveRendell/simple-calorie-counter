@@ -2,6 +2,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .date-nav {
@@ -21,6 +22,50 @@
 .date-label {
   font-size: 16px;
   font-weight: 600;
+}
+
+.day-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.day-content.slide-from-left {
+  animation: slide-in-from-left 250ms ease-out;
+}
+
+.day-content.slide-from-right {
+  animation: slide-in-from-right 250ms ease-out;
+}
+
+@keyframes slide-in-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-30%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(30%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .day-content.slide-from-left,
+  .day-content.slide-from-right {
+    animation: none;
+  }
 }
 
 .entries-list {

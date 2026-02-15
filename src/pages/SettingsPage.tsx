@@ -215,7 +215,7 @@ export function SettingsPage() {
             ? "Clear All Data"
             : `Tap ${CLEAR_TAPS_REQUIRED - clearTaps} More to Confirm`}
         </button>
-        </div>
+      </div>
     </div>
   );
 }
