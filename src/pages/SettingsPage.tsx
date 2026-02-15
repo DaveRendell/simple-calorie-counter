@@ -85,46 +85,54 @@ export function SettingsPage() {
 
   return (
     <div className="settings-page">
-      <div className="form-field">
-        <label htmlFor="target">Daily Calorie Target</label>
-        <input
-          id="target"
-          type="number"
-          inputMode="numeric"
-          value={target}
-          onChange={(e) => setEditedTarget(e.target.value)}
-          onBlur={handleBlur}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              (e.target as HTMLInputElement).blur();
-            }
-          }}
-        />
+      <div className="settings-section">
+        <h3 className="settings-section-heading">User Settings</h3>
+        <div className="form-field">
+          <label htmlFor="target">Daily Calorie Target</label>
+          <input
+            id="target"
+            type="number"
+            inputMode="numeric"
+            value={target}
+            onChange={(e) => setEditedTarget(e.target.value)}
+            onBlur={handleBlur}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                (e.target as HTMLInputElement).blur();
+              }
+            }}
+          />
+        </div>
+        <button
+          className="settings-link-button"
+          onClick={() => navigate("/placeholders")}
+        >
+          Manage Meal Placeholders
+        </button>
       </div>
-      <div className="form-field">
-        <label>Theme</label>
-        <div className="theme-toggle" role="radiogroup" aria-label="Theme">
-          {THEME_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              role="radio"
-              aria-checked={settings.theme === opt.value}
-              className={`theme-toggle-btn${settings.theme === opt.value ? " theme-toggle-btn--active" : ""}`}
-              onClick={() => updateSettings({ theme: opt.value })}
-            >
-              {opt.label}
-            </button>
-          ))}
+
+      <div className="settings-section">
+        <h3 className="settings-section-heading">Display</h3>
+        <div className="form-field">
+          <label>Theme</label>
+          <div className="theme-toggle" role="radiogroup" aria-label="Theme">
+            {THEME_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                role="radio"
+                aria-checked={settings.theme === opt.value}
+                className={`theme-toggle-btn${settings.theme === opt.value ? " theme-toggle-btn--active" : ""}`}
+                onClick={() => updateSettings({ theme: opt.value })}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
-      <button
-        className="settings-link-button"
-        onClick={() => navigate("/placeholders")}
-      >
-        Manage Meal Placeholders
-      </button>
-      <div className="data-management">
-        <label>Data Management</label>
+
+      <div className="settings-section">
+        <h3 className="settings-section-heading">Data Management</h3>
         {statusMessage && <p className="data-status">{statusMessage}</p>}
         <button
           className="settings-link-button"
@@ -207,7 +215,7 @@ export function SettingsPage() {
             ? "Clear All Data"
             : `Tap ${CLEAR_TAPS_REQUIRED - clearTaps} More to Confirm`}
         </button>
-      </div>
+        </div>
     </div>
   );
 }
