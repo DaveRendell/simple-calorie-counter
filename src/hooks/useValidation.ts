@@ -43,7 +43,7 @@ export const required = (label: string): ValidationRule => {
 
 export const positiveNumber = (label: string): ValidationRule => {
   return (value) => {
-    const num = parseInt(value, 10);
+    const num = parseFloat(value);
     return num > 0 ? null : `${label} must be a positive number`;
   };
 };
