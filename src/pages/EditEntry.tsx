@@ -43,7 +43,7 @@ export function EditEntry() {
       description: description.trim(),
       isFromPlaceholder: false,
     });
-    navigate(-1);
+    navigate("/", { state: { date: entry.date } });
   };
 
   const handleDelete = async () => {
@@ -53,7 +53,7 @@ export function EditEntry() {
       return;
     }
     await deleteEntry();
-    navigate(-1);
+    navigate("/", { state: { date: entry.date } });
   };
 
   if (!entry) {

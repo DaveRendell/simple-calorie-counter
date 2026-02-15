@@ -38,7 +38,7 @@ export function RecentEntries() {
       createdAt: now,
       sortOrder: now,
     });
-    navigate(-1);
+    navigate("/", { state: { date } });
   };
 
   return (

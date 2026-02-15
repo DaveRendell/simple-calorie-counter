@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   DndContext,
   closestCenter,
@@ -45,7 +45,10 @@ function addDays(dateStr: string, days: number): string {
 }
 
 export function DayView() {
-  const [date, setDate] = useState(getToday);
+  const location = useLocation();
+  const initialDate =
+    (location.state as { date?: string } | null)?.date ?? getToday();
+  const [date, setDate] = useState(initialDate);
   const { entries, totalCalories, loading, reorderEntries, refresh } =
     useEntries(date);
   const { settings } = useSettings();

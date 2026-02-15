@@ -108,6 +108,35 @@ describe("EntryForm", () => {
     );
   });
 
+  it("should return to the same date after adding an entry on a non-today date", async () => {
+    const { user } = renderApp();
+
+    // Navigate to previous day
+    await user.click(screen.getByLabelText("Previous day"));
+    const dateLabel = screen.queryByText("Today");
+    expect(dateLabel).not.toBeInTheDocument();
+
+    // Remember the displayed date
+    const dateLabelEl = document.querySelector(".date-label")!;
+    const previousDayText = dateLabelEl.textContent!;
+
+    // Add an entry
+    await user.click(screen.getByText("Log Calories"));
+    await user.type(screen.getByLabelText("Calories"), "400");
+    await user.type(
+      screen.getByLabelText("Description (optional)"),
+      "Yesterday lunch",
+    );
+    await user.click(screen.getByText("Save"));
+
+    // Should be back on the previous day, not today
+    expect(await screen.findByText("400 cal")).toBeInTheDocument();
+    expect(screen.queryByText("Today")).not.toBeInTheDocument();
+    expect(document.querySelector(".date-label")!.textContent).toBe(
+      previousDayText,
+    );
+  });
+
   it("should clear validation error when user starts typing", async () => {
     const { user } = renderApp();
 

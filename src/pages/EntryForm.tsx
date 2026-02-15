@@ -50,7 +50,7 @@ export function EntryForm() {
       createdAt: now,
       sortOrder: now,
     });
-    navigate(-1);
+    navigate("/", { state: { date } });
   };
 
   return (
