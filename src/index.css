@@ -52,12 +52,12 @@ html {
 }
 
 body {
-  min-height: 100dvh;
+  min-height: 100vh;
 }
 
 #root {
   margin: 0 auto;
-  height: 100dvh;
+  height: 100vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
