@@ -22,7 +22,8 @@ import { ProgressBar } from "../components/ProgressBar";
 import { toDateStr } from "../dateFormat";
 import { useSwipe } from "../hooks/useSwipe";
 import "./DayView.css";
-import { ADD, HISTORY, LEFT, RIGHT, SEARCH } from "../icons";
+import { ADD, HISTORY, LEFT, RIGHT, SEARCH, SETTINGS } from "../icons";
+import { Header } from "../components/Header";
 
 function formatDate(dateStr: string): string {
   const [year, month, day] = dateStr.split("-").map(Number);
@@ -129,6 +130,18 @@ export function DayView() {
 
   return (
     <div className="day-view" ref={swipeRef}>
+      <Header
+        title="Calories"
+        rightIcon={
+          <button
+            className="header-icon"
+            onClick={() => navigate("/settings")}
+            aria-label="Settings"
+          >
+            {SETTINGS}
+          </button>
+        }
+      />
       <div className="date-nav">
         <button
           className="date-arrow"

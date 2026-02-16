@@ -3,7 +3,6 @@ import { DataStoreProvider } from "./hooks/DataStoreProvider";
 import { SettingsProvider } from "./hooks/SettingsProvider";
 import { IndexedDBStore } from "./store";
 import { useTheme } from "./hooks/useTheme";
-import { Header } from "./components/Header";
 import { DayView } from "./pages/DayView";
 import { EntryForm } from "./pages/EntryForm";
 import { EditEntry } from "./pages/EditEntry";
@@ -20,7 +19,6 @@ function AppRoutes() {
   const { pathname } = useLocation();
   return (
     <div key={pathname} className="page-transition">
-      <Header />
       <Routes>
         <Route path="/" element={<DayView />} />
         <Route path="/add" element={<EntryForm />} />

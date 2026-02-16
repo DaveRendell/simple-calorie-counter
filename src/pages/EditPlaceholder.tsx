@@ -6,6 +6,8 @@ import {
   required,
   positiveNumber,
 } from "../hooks/useValidation";
+import { LEFT } from "../icons";
+import { Header } from "../components/Header";
 import "./EditEntry.css";
 
 export function EditPlaceholder() {
@@ -60,9 +62,20 @@ export function EditPlaceholder() {
     navigate(-1);
   };
 
+  const backButton = (
+    <button
+      className="header-icon"
+      onClick={() => navigate(-1)}
+      aria-label="Back"
+    >
+      {LEFT}
+    </button>
+  );
+
   if (!placeholder) {
     return (
       <div className="edit-entry">
+        <Header title="Edit Placeholder" leftIcon={backButton} />
         <p className="loading">Loading...</p>
       </div>
     );
@@ -70,6 +83,7 @@ export function EditPlaceholder() {
 
   return (
     <div className="edit-entry">
+      <Header title="Edit Placeholder" leftIcon={backButton} />
       <div className="form-field">
         <label htmlFor="calories">Calories</label>
         <input

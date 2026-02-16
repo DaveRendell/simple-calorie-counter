@@ -30,13 +30,16 @@ export function EntryCard({
     <div
       ref={setNodeRef}
       style={style}
-      className={`entry-card${isDragging ? " entry-card--dragging" : ""}${variant === "placeholder" ? " entry-card--placeholder" : ""}`}
+      className={`entry-card${isDragging ? " entry-card--dragging" : ""}${variant === "placeholder" ? " entry-card--placeholder" : ""}${entry.calories < 0 ? " entry-card--exercise" : ""}`}
     >
       <button
         className="entry-card-content"
         onClick={() => navigate(`/edit/${entry.id}`)}
       >
-        <span className="entry-calories">{entry.calories} cal</span>
+        <span className="entry-calories">
+          {entry.calories < 0 && <span className="entry-calories-sign">-</span>}
+          {Math.abs(entry.calories)} cal
+        </span>
         <span className="entry-description">
           {entry.description || "No description"}
         </span>

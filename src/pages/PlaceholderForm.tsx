@@ -6,6 +6,8 @@ import {
   required,
   positiveNumber,
 } from "../hooks/useValidation";
+import { LEFT } from "../icons";
+import { Header } from "../components/Header";
 import "./EntryForm.css";
 
 export function PlaceholderForm() {
@@ -44,6 +46,18 @@ export function PlaceholderForm() {
 
   return (
     <div className="entry-form">
+      <Header
+        title="Add Placeholder"
+        leftIcon={
+          <button
+            className="header-icon"
+            onClick={() => navigate(-1)}
+            aria-label="Back"
+          >
+            {LEFT}
+          </button>
+        }
+      />
       <div className="form-field">
         <label htmlFor="calories">Calories</label>
         <input

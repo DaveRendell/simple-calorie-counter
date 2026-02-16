@@ -9,6 +9,8 @@
   --color-border: #e5e7eb;
   --color-danger: #ef4444;
   --color-danger-hover: #dc2626;
+  --color-exercise: #f59e0b;
+  --color-exercise-light: #fef3c7;
   --radius: 8px;
 }
 
@@ -23,6 +25,8 @@
   --color-border: #2e2e2e;
   --color-danger: #f87171;
   --color-danger-hover: #ef4444;
+  --color-exercise: #fbbf24;
+  --color-exercise-light: rgba(251, 191, 36, 0.15);
   color-scheme: dark;
 }
 

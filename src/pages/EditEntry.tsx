@@ -6,12 +6,17 @@ import {
   required,
   positiveNumber,
 } from "../hooks/useValidation";
+import { LEFT } from "../icons";
+import { Header } from "../components/Header";
 import "./EditEntry.css";
+
+type EntryType = "food" | "exercise";
 
 export function EditEntry() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { entry, updateEntry, deleteEntry } = useEntry(id);
+  const [entryType, setEntryType] = useState<EntryType>("food");
   const [calories, setCalories] = useState("");
   const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
@@ -27,7 +32,9 @@ export function EditEntry() {
   const { errors, validate, clearError } = useValidation(rules);
 
   if (entry && !initialized) {
-    setCalories(String(entry.calories));
+    const isExercise = entry.calories < 0;
+    setEntryType(isExercise ? "exercise" : "food");
+    setCalories(String(Math.abs(entry.calories)));
     setDescription(entry.description);
     setInitialized(true);
   }
@@ -39,7 +46,7 @@ export function EditEntry() {
     setSaving(true);
     await updateEntry({
       ...entry,
-      calories: parseInt(calories, 10),
+      calories: parseInt(calories, 10) * (entryType === "exercise" ? -1 : 1),
       description: description.trim(),
       isFromPlaceholder: false,
     });
@@ -56,9 +63,20 @@ export function EditEntry() {
     navigate("/", { state: { date: entry.date } });
   };
 
+  const backButton = (
+    <button
+      className="header-icon"
+      onClick={() => navigate(-1)}
+      aria-label="Back"
+    >
+      {LEFT}
+    </button>
+  );
+
   if (!entry) {
     return (
       <div className="edit-entry">
+        <Header title="Edit Entry" leftIcon={backButton} />
         <p className="loading">Loading...</p>
       </div>
     );
@@ -66,6 +84,24 @@ export function EditEntry() {
 
   return (
     <div className="edit-entry">
+      <Header title="Edit Entry" leftIcon={backButton} />
+      <div
+        className="entry-type-toggle"
+        role="radiogroup"
+        aria-label="Entry type"
+      >
+        {(["food", "exercise"] as const).map((type) => (
+          <button
+            key={type}
+            role="radio"
+            aria-checked={entryType === type}
+            className={`entry-type-toggle-btn${entryType === type ? " entry-type-toggle-btn--active" : ""}`}
+            onClick={() => setEntryType(type)}
+          >
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </button>
+        ))}
+      </div>
       <div className="form-field">
         <label htmlFor="calories">Calories</label>
         <input

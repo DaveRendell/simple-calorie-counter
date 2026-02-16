@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useDataStore } from "../hooks/useDataStore";
 import { useSettings } from "../hooks/useSettings";
 import type { FoodEntry, ThemeMode } from "../types";
+import { LEFT } from "../icons";
+import { Header } from "../components/Header";
 import "./SettingsPage.css";
 
 const THEME_OPTIONS: { value: ThemeMode; label: string }[] = [
@@ -85,6 +87,18 @@ export function SettingsPage() {
 
   return (
     <div className="settings-page">
+      <Header
+        title="Settings"
+        leftIcon={
+          <button
+            className="header-icon"
+            onClick={() => navigate(-1)}
+            aria-label="Back"
+          >
+            {LEFT}
+          </button>
+        }
+      />
       <div className="settings-section">
         <h3 className="settings-section-heading">User Settings</h3>
         <div className="form-field">

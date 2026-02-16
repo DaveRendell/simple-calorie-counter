@@ -2,7 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { usePlaceholders } from "../hooks/usePlaceholders";
 import { PlaceholderCard } from "../components/PlaceholderCard";
 import "./PlaceholderList.css";
-import { ADD } from "../icons";
+import { ADD, LEFT } from "../icons";
+import { Header } from "../components/Header";
 
 export function PlaceholderList() {
   const { placeholders, loading } = usePlaceholders();
@@ -10,6 +11,18 @@ export function PlaceholderList() {
 
   return (
     <div className="placeholder-list">
+      <Header
+        title="Placeholders"
+        leftIcon={
+          <button
+            className="header-icon"
+            onClick={() => navigate(-1)}
+            aria-label="Back"
+          >
+            {LEFT}
+          </button>
+        }
+      />
       <div className="placeholder-list-items">
         {loading ? (
           <p className="placeholder-empty">Loading...</p>

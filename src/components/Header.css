@@ -15,8 +15,7 @@
   font-weight: 600;
 }
 
-.header-back,
-.header-settings {
+.header-icon {
   background: none;
   padding: 8px;
   font-size: 20px;

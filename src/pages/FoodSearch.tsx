@@ -2,6 +2,8 @@ import { useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toDateStr } from "../dateFormat";
 import { searchFoods, type FoodSearchResult } from "../api/searchFoods";
+import { LEFT } from "../icons";
+import { Header } from "../components/Header";
 import "./FoodSearch.css";
 
 export function FoodSearch() {
@@ -49,6 +51,18 @@ export function FoodSearch() {
 
   return (
     <div className="food-search">
+      <Header
+        title="Food Search"
+        leftIcon={
+          <button
+            className="header-icon"
+            onClick={() => navigate(-1)}
+            aria-label="Back"
+          >
+            {LEFT}
+          </button>
+        }
+      />
       <form className="food-search-form" onSubmit={handleSearch}>
         <input
           ref={inputRef}

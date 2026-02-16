@@ -53,10 +53,16 @@
 }
 
 .entry-calories {
+  position: relative;
   font-weight: 600;
   font-size: 16px;
   white-space: nowrap;
   width: 5em;
+}
+
+.entry-calories-sign {
+  position: absolute;
+  right: 100%;
 }
 
 .entry-description {
@@ -70,6 +76,11 @@
 .entry-card--placeholder {
   border-left: 3px solid var(--color-primary);
   background: var(--color-primary-light);
+}
+
+.entry-card--exercise {
+  border-left: 3px solid var(--color-exercise);
+  background: var(--color-exercise-light);
 }
 
 .entry-time {

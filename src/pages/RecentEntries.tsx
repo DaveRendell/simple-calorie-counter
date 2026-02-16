@@ -4,7 +4,8 @@ import { useDataStore } from "../hooks/useDataStore";
 import { toDateStr } from "../dateFormat";
 import type { FoodEntry } from "../types";
 import "./RecentEntries.css";
-import { ADD } from "../icons";
+import { ADD, LEFT } from "../icons";
+import { Header } from "../components/Header";
 
 export function RecentEntries() {
   const store = useDataStore();
@@ -43,6 +44,18 @@ export function RecentEntries() {
 
   return (
     <div className="recent-entries">
+      <Header
+        title="Recent Entries"
+        leftIcon={
+          <button
+            className="header-icon"
+            onClick={() => navigate(-1)}
+            aria-label="Back"
+          >
+            {LEFT}
+          </button>
+        }
+      />
       <input
         className="recent-search"
         type="text"

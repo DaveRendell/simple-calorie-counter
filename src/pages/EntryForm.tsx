@@ -7,7 +7,11 @@ import {
   positiveNumber,
 } from "../hooks/useValidation";
 import { toDateStr } from "../dateFormat";
+import { LEFT } from "../icons";
+import { Header } from "../components/Header";
 import "./EntryForm.css";
+
+type EntryType = "food" | "exercise";
 
 export function EntryForm() {
   const navigate = useNavigate();
@@ -19,6 +23,7 @@ export function EntryForm() {
     calories?: string;
     description?: string;
   } | null;
+  const [entryType, setEntryType] = useState<EntryType>("food");
   const [calories, setCalories] = useState(state?.calories ?? "");
   const [multiplier, setMultiplier] = useState("1.0");
   const [description, setDescription] = useState(state?.description ?? "");
@@ -49,7 +54,9 @@ export function EntryForm() {
     const now = Date.now();
     await store.entries.add({
       date,
-      calories: Math.round(parseInt(calories, 10) * parseFloat(multiplier)),
+      calories:
+        Math.round(parseInt(calories, 10) * parseFloat(multiplier)) *
+        (entryType === "exercise" ? -1 : 1),
       description: description.trim(),
       createdAt: now,
       sortOrder: now,
@@ -59,6 +66,35 @@ export function EntryForm() {
 
   return (
     <div className="entry-form">
+      <Header
+        title="Add Entry"
+        leftIcon={
+          <button
+            className="header-icon"
+            onClick={() => navigate(-1)}
+            aria-label="Back"
+          >
+            {LEFT}
+          </button>
+        }
+      />
+      <div
+        className="entry-type-toggle"
+        role="radiogroup"
+        aria-label="Entry type"
+      >
+        {(["food", "exercise"] as const).map((type) => (
+          <button
+            key={type}
+            role="radio"
+            aria-checked={entryType === type}
+            className={`entry-type-toggle-btn${entryType === type ? " entry-type-toggle-btn--active" : ""}`}
+            onClick={() => setEntryType(type)}
+          >
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </button>
+        ))}
+      </div>
       <div className="form-field">
         <label htmlFor="calories">Calories</label>
         <input
@@ -110,7 +146,9 @@ export function EntryForm() {
         <input
           id="description"
           type="text"
-          placeholder="What did you eat?"
+          placeholder={
+            entryType === "exercise" ? "What did you do?" : "What did you eat?"
+          }
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSave()}
