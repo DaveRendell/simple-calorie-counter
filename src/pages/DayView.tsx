@@ -22,7 +22,7 @@ import { ProgressBar } from "../components/ProgressBar";
 import { toDateStr } from "../dateFormat";
 import { useSwipe } from "../hooks/useSwipe";
 import "./DayView.css";
-import { ADD, HISTORY, LEFT, RIGHT } from "../icons";
+import { ADD, HISTORY, LEFT, RIGHT, SEARCH } from "../icons";
 
 function formatDate(dateStr: string): string {
   const [year, month, day] = dateStr.split("-").map(Number);
@@ -192,6 +192,13 @@ export function DayView() {
       </div>
 
       <div className="add-button-container">
+        <button
+          className="search-button"
+          onClick={() => navigate("/search", { state: { date } })}
+          aria-label="Search foods"
+        >
+          {SEARCH}
+        </button>
         <button
           className="add-button"
           onClick={() => navigate("/add", { state: { date } })}

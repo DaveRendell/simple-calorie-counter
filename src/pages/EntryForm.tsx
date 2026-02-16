@@ -14,9 +14,14 @@ export function EntryForm() {
   const location = useLocation();
   const store = useDataStore();
   const caloriesRef = useRef<HTMLInputElement>(null);
-  const [calories, setCalories] = useState("");
+  const state = location.state as {
+    date?: string;
+    calories?: string;
+    description?: string;
+  } | null;
+  const [calories, setCalories] = useState(state?.calories ?? "");
   const [multiplier, setMultiplier] = useState("1.0");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState(state?.description ?? "");
   const [saving, setSaving] = useState(false);
 
   const rules = useMemo(
@@ -31,8 +36,7 @@ export function EntryForm() {
   );
   const { errors, validate, clearError } = useValidation(rules);
 
-  const date =
-    (location.state as { date?: string } | null)?.date ?? toDateStr(new Date());
+  const date = state?.date ?? toDateStr(new Date());
 
   useEffect(() => {
     caloriesRef.current?.focus();

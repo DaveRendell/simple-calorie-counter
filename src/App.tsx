@@ -12,6 +12,7 @@ import { RecentEntries } from "./pages/RecentEntries";
 import { PlaceholderList } from "./pages/PlaceholderList";
 import { PlaceholderForm } from "./pages/PlaceholderForm";
 import { EditPlaceholder } from "./pages/EditPlaceholder";
+import { FoodSearch } from "./pages/FoodSearch";
 
 const store = new IndexedDBStore();
 
@@ -26,6 +27,7 @@ function AppRoutes() {
         <Route path="/edit/:id" element={<EditEntry />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/recent" element={<RecentEntries />} />
+        <Route path="/search" element={<FoodSearch />} />
         <Route path="/placeholders" element={<PlaceholderList />} />
         <Route path="/placeholders/add" element={<PlaceholderForm />} />
         <Route path="/placeholders/edit/:id" element={<EditPlaceholder />} />

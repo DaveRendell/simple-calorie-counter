@@ -13,6 +13,7 @@ import { RecentEntries } from "../../src/pages/RecentEntries";
 import { PlaceholderList } from "../../src/pages/PlaceholderList";
 import { PlaceholderForm } from "../../src/pages/PlaceholderForm";
 import { EditPlaceholder } from "../../src/pages/EditPlaceholder";
+import { FoodSearch } from "../../src/pages/FoodSearch";
 import "fake-indexeddb/auto";
 
 export function renderApp(initialRoute = "/") {
@@ -32,6 +33,7 @@ export function renderApp(initialRoute = "/") {
               <Route path="/edit/:id" element={<EditEntry />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/recent" element={<RecentEntries />} />
+              <Route path="/search" element={<FoodSearch />} />
               <Route path="/placeholders" element={<PlaceholderList />} />
               <Route path="/placeholders/add" element={<PlaceholderForm />} />
               <Route

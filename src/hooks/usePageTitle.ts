@@ -5,6 +5,7 @@ const titles: Record<string, string> = {
   "/add": "Add Entry",
   "/settings": "Settings",
   "/recent": "Recent Entries",
+  "/search": "Food Search",
   "/placeholders": "Placeholders",
   "/placeholders/add": "Add Placeholder",
 };
