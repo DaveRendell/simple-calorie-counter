@@ -199,4 +199,98 @@ describe("IndexedDBFoodEntryStore", () => {
       expect(recent).toHaveLength(0);
     });
   });
+
+  describe("getFirstOnOrAfterDate", () => {
+    it("should return the first entry on the given date", async () => {
+      await store.add({
+        date: "2024-01-15",
+        calories: 500,
+        description: "Lunch",
+        createdAt: 1000,
+        calorieGoal: 2000,
+      });
+
+      const result = await store.getFirstOnOrAfterDate("2024-01-15");
+      expect(result).toBeDefined();
+      expect(result!.calorieGoal).toBe(2000);
+    });
+
+    it("should return the first entry after the given date if none on that date", async () => {
+      await store.add({
+        date: "2024-01-17",
+        calories: 300,
+        description: "Later",
+        createdAt: 2000,
+        calorieGoal: 1800,
+      });
+
+      const result = await store.getFirstOnOrAfterDate("2024-01-15");
+      expect(result).toBeDefined();
+      expect(result!.calorieGoal).toBe(1800);
+    });
+
+    it("should return undefined when no entries exist on or after the date", async () => {
+      await store.add({
+        date: "2024-01-10",
+        calories: 500,
+        description: "Old",
+        createdAt: 1000,
+        calorieGoal: 2000,
+      });
+
+      const result = await store.getFirstOnOrAfterDate("2024-01-15");
+      expect(result).toBeUndefined();
+    });
+
+    it("should prefer earlier date over later date", async () => {
+      await store.add({
+        date: "2024-01-16",
+        calories: 300,
+        description: "Day 2",
+        createdAt: 2000,
+        calorieGoal: 1500,
+      });
+      await store.add({
+        date: "2024-01-15",
+        calories: 500,
+        description: "Day 1",
+        createdAt: 1000,
+        calorieGoal: 2000,
+      });
+
+      const result = await store.getFirstOnOrAfterDate("2024-01-15");
+      expect(result!.calorieGoal).toBe(2000);
+    });
+
+    it("should skip entries without calorieGoal", async () => {
+      await store.add({
+        date: "2024-01-15",
+        calories: 500,
+        description: "No goal",
+        createdAt: 1000,
+      });
+      await store.add({
+        date: "2024-01-16",
+        calories: 300,
+        description: "Has goal",
+        createdAt: 2000,
+        calorieGoal: 1800,
+      });
+
+      const result = await store.getFirstOnOrAfterDate("2024-01-15");
+      expect(result!.calorieGoal).toBe(1800);
+    });
+
+    it("should return undefined when all entries lack calorieGoal", async () => {
+      await store.add({
+        date: "2024-01-15",
+        calories: 500,
+        description: "No goal",
+        createdAt: 1000,
+      });
+
+      const result = await store.getFirstOnOrAfterDate("2024-01-15");
+      expect(result).toBeUndefined();
+    });
+  });
 });

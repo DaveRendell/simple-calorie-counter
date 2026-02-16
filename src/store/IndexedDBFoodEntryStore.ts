@@ -35,4 +35,14 @@ export class IndexedDBFoodEntryStore
       .sort((a, b) => b.createdAt - a.createdAt)
       .slice(0, 100);
   }
+
+  async getFirstOnOrAfterDate(date: string): Promise<FoodEntry | undefined> {
+    const all = await this.getAll();
+    return all
+      .filter((e) => e.date >= date && e.calorieGoal !== undefined)
+      .sort((a, b) =>
+        a.date < b.date ? -1 : a.date > b.date ? 1 : a.createdAt - b.createdAt,
+      )
+      .at(0);
+  }
 }

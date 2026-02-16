@@ -15,13 +15,13 @@ const THEME_OPTIONS: { value: ThemeMode; label: string }[] = [
 
 function entriesToCsv(entries: FoodEntry[]): string {
   const header =
-    "id,date,calories,description,createdAt,sortOrder,isFromPlaceholder";
+    "id,date,calories,description,createdAt,sortOrder,isFromPlaceholder,calorieGoal";
   const rows = entries.map((e) => {
     const desc =
       e.description.includes(",") || e.description.includes('"')
         ? `"${e.description.replace(/"/g, '""')}"`
         : e.description;
-    return `${e.id},${e.date},${e.calories},${desc},${e.createdAt},${e.sortOrder ?? ""},${e.isFromPlaceholder ?? ""}`;
+    return `${e.id},${e.date},${e.calories},${desc},${e.createdAt},${e.sortOrder ?? ""},${e.isFromPlaceholder ?? ""},${e.calorieGoal ?? ""}`;
   });
   return [header, ...rows].join("\n");
 }
@@ -57,6 +57,7 @@ function parseCsv(text: string): Omit<FoodEntry, never>[] {
     };
     if (fields[5]) entry.sortOrder = Number(fields[5]);
     if (fields[6] === "true") entry.isFromPlaceholder = true;
+    if (fields[7]) entry.calorieGoal = Number(fields[7]);
     entries.push(entry);
   }
   return entries;

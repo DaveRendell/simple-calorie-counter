@@ -51,8 +51,14 @@ export function DayView() {
   const initialDate =
     (location.state as { date?: string } | null)?.date ?? getToday();
   const [date, setDate] = useState(initialDate);
-  const { entries, totalCalories, loading, reorderEntries, refresh } =
-    useEntries(date);
+  const {
+    entries,
+    totalCalories,
+    loading,
+    reorderEntries,
+    refresh,
+    effectiveGoal,
+  } = useEntries(date);
   const { settings } = useSettings();
   const store = useDataStore();
   const navigate = useNavigate();
@@ -97,11 +103,12 @@ export function DayView() {
           createdAt: ts,
           sortOrder: ts,
           isFromPlaceholder: true,
+          calorieGoal: settings.dailyCalorieTarget,
         });
       }
       refresh();
     })();
-  }, [loading, isToday, date, store, refresh]);
+  }, [loading, isToday, date, store, refresh, settings.dailyCalorieTarget]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -171,7 +178,7 @@ export function DayView() {
       <div key={date} className={`day-content ${slideClass}`}>
         <ProgressBar
           current={totalCalories}
-          target={settings.dailyCalorieTarget}
+          target={effectiveGoal ?? settings.dailyCalorieTarget}
         />
 
         <div className="entries-list">

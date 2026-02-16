@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDataStore } from "../hooks/useDataStore";
+import { useSettings } from "../hooks/useSettings";
 import { toDateStr } from "../dateFormat";
 import type { FoodEntry } from "../types";
 import "./RecentEntries.css";
@@ -9,6 +10,7 @@ import { Header } from "../components/Header";
 
 export function RecentEntries() {
   const store = useDataStore();
+  const { settings } = useSettings();
   const navigate = useNavigate();
   const location = useLocation();
   const date =
@@ -38,6 +40,7 @@ export function RecentEntries() {
       description: entry.description,
       createdAt: now,
       sortOrder: now,
+      calorieGoal: settings.dailyCalorieTarget,
     });
     navigate("/", { state: { date } });
   };

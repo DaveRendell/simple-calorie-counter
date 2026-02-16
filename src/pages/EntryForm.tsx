@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDataStore } from "../hooks/useDataStore";
+import { useSettings } from "../hooks/useSettings";
 import {
   useValidation,
   required,
@@ -17,6 +18,7 @@ export function EntryForm() {
   const navigate = useNavigate();
   const location = useLocation();
   const store = useDataStore();
+  const { settings } = useSettings();
   const caloriesRef = useRef<HTMLInputElement>(null);
   const state = location.state as {
     date?: string;
@@ -60,6 +62,7 @@ export function EntryForm() {
       description: description.trim(),
       createdAt: now,
       sortOrder: now,
+      calorieGoal: settings.dailyCalorieTarget,
     });
     navigate("/", { state: { date } });
   };

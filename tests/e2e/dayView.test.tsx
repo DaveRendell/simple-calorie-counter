@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { screen } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { toDateStr } from "../../src/dateFormat";
 import { renderApp } from "./helpers";
 
@@ -79,5 +79,38 @@ describe("DayView", () => {
     renderApp("/");
     expect(await screen.findByText("300 cal")).toBeInTheDocument();
     expect(screen.getByText("No description")).toBeInTheDocument();
+  });
+
+  it("should use calorie goal from entry instead of settings", async () => {
+    const { store } = renderApp("/settings");
+    const today = toDateStr(new Date());
+
+    // Settings say 2000, but the entry has a goal of 1500
+    await store.entries.add({
+      date: today,
+      calories: 500,
+      description: "Lunch",
+      createdAt: Date.now(),
+      calorieGoal: 1500,
+    });
+
+    renderApp("/");
+    expect(await screen.findByText(/\/ 1500 cal/)).toBeInTheDocument();
+    expect(screen.getByText("1000 remaining")).toBeInTheDocument();
+  });
+
+  it("should fall back to settings goal when no entries have calorieGoal", async () => {
+    const { store } = renderApp("/settings");
+    const today = toDateStr(new Date());
+
+    await store.entries.add({
+      date: today,
+      calories: 500,
+      description: "Lunch",
+      createdAt: Date.now(),
+    });
+
+    renderApp("/");
+    expect(await screen.findByText(/\/ 2000 cal/)).toBeInTheDocument();
   });
 });

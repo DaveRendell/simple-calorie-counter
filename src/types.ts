@@ -6,6 +6,7 @@ export interface FoodEntry {
   createdAt: number;
   sortOrder?: number;
   isFromPlaceholder?: boolean;
+  calorieGoal?: number;
 }
 
 export interface Placeholder {

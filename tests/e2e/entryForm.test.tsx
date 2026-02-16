@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { screen } from "@testing-library/react";
+import { toDateStr } from "../../src/dateFormat";
 import { renderApp } from "./helpers";
 
 describe("EntryForm", () => {
@@ -146,5 +147,31 @@ describe("EntryForm", () => {
 
     await user.type(screen.getByLabelText("Calories"), "1");
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("should store calorieGoal from settings when adding an entry", async () => {
+    const { user, store } = renderApp();
+    const today = toDateStr(new Date());
+
+    // Change the calorie target via the UI so React context is updated
+    await screen.findByText("Today");
+    await user.click(screen.getByLabelText("Settings"));
+
+    const input = await screen.findByLabelText("Daily Calorie Target");
+    await vi.waitFor(() => expect(input).toHaveValue(2000));
+    await user.clear(input);
+    await user.type(input, "1800");
+    await user.tab();
+
+    await user.click(screen.getByLabelText("Back"));
+
+    await user.click(await screen.findByText("Log Calories"));
+    await user.type(screen.getByLabelText("Calories"), "500");
+    await user.click(screen.getByText("Save"));
+
+    await screen.findByText("500 cal");
+
+    const entries = await store.entries.getByDate(today);
+    expect(entries[0].calorieGoal).toBe(1800);
   });
 });
